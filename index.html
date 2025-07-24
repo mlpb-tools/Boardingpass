@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outil de Diagnostic Mobilité Internationale v4 (avec IA)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+        }
+        .form-section {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+        }
+        .form-section h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e3a8a;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            border-bottom: 2px solid #dbeafe;
+            padding-bottom: 0.5rem;
+        }
+         .form-section h2 svg {
+            margin-right: 0.75rem;
+            color: #3b82f6;
+        }
+        label, .label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        .input, .textarea, .select {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background-color: #f9fafb;
+        }
+        .input:focus, .textarea:focus, .select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px #bfdbfe;
+            background-color: white;
+        }
+        .checkbox-group, .radio-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .checkbox, .radio {
+            margin-right: 0.5rem;
+            height: 1.25rem;
+            width: 1.25rem;
+            border-radius: 0.25rem;
+            border-color: #9ca3af;
+            flex-shrink: 0;
+        }
+        .radio { border-radius: 50%; }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.625rem 1.25rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border: none;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-primary { background-color: #2563eb; color: white; }
+        .btn-primary:hover:not(:disabled) { background-color: #1d4ed8; }
+        .btn-secondary { background-color: #e5e7eb; color: #374151; }
+        .btn-secondary:hover:not(:disabled) { background-color: #d1d5db; }
+        .btn-danger { background-color: #dc2626; color: white; }
+        .btn-danger:hover:not(:disabled) { background-color: #b91c1c; }
+        .btn-ai {
+            background-color: #c084fc;
+            color: white;
+            padding-top: 0.375rem;
+            padding-bottom: 0.375rem;
+        }
+        .btn-ai:hover:not(:disabled) { background-color: #a855f7; }
+
+        #youth-list li {
+            padding: 0.75rem;
+            border-bottom: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #youth-list li:hover, #youth-list li.active { background-color: #eff6ff; }
+        #youth-list li:last-child { border-bottom: none; }
+
+        .profile-card { border: 2px solid #e5e7eb; border-radius: 0.5rem; padding: 1rem; transition: border-color 0.2s; }
+
+        .analysis-domain {
+            padding: 1.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .analysis-domain h3 { font-size: 1.1rem; font-weight: 700; color: #1e3a8a; margin-bottom: 1rem; }
+        .analysis-question { font-size: 0.9rem; color: #4b5563; margin-bottom: 0.75rem; font-weight: 500; }
+        .analysis-responses { display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 1rem; }
+        .hidden { display: none; }
+
+        /* Loader Animation */
+        .loader {
+            border-top-color: #3b82f6;
+            -webkit-animation: spinner 1.5s linear infinite;
+            animation: spinner 1.5s linear infinite;
+        }
+        @-webkit-keyframes spinner { 0% { -webkit-transform: rotate(0deg); } 100% { -webkit-transform: rotate(360deg); } }
+        @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        @media print {
+            body { background-color: white; }
+            .no-print { display: none; }
+            .form-section { box-shadow: none; border: 1px solid #e5e7eb; margin-bottom: 1rem; }
+            .container { max-width: 100%; padding: 0; }
+            .textarea, .input { border: none; background-color: #f9fafb; }
+        }
+    </style>
+</head>
+<body class="bg-slate-100">
+
+    <div id="start-screen" class="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-slate-100 p-4">
+        <img src="https://images.pexels.com/photos/2387793/pexels-photo-2387793.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Jeunes regardant une carte du monde" class="w-64 h-64 object-cover rounded-full mb-8 shadow-lg">
+        <h1 class="text-4xl font-bold text-gray-800 text-center mb-4">Diag Mobilité internationale</h1>
+        <p class="text-gray-600 mb-8 text-center">Outil d'analyse et de définition du parcours de préparation au départ.</p>
+        <button id="start-diag-btn" class="btn btn-primary text-lg px-8 py-3">Commencer</button>
+    </div>
+
+    <div id="main-content" class="container mx-auto p-4 md:p-8 hidden">
+        <header class="no-print mb-8 flex flex-col md:flex-row justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800">Diagnostic Mobilité Internationale</h1>
+                <p class="text-gray-500">Outil d'analyse et de définition du parcours de préparation au départ.</p>
+            </div>
+            <div class="flex items-center space-x-2 mt-4 md:mt-0">
+                <button id="print-btn" class="btn btn-secondary"><i data-lucide="printer" class="w-4 h-4 mr-2"></i>Imprimer / PDF</button>
+                <button id="save-btn" class="btn btn-primary"><i data-lucide="save" class="w-4 h-4 mr-2"></i>Sauvegarder</button>
+            </div>
+        </header>
+
+        <div class="flex flex-col md:flex-row gap-8">
+            <aside class="md:w-1/3 lg:w-1/4 no-print">
+                <div class="form-section p-4 sticky top-8">
+                    <h2 class="text-lg !text-gray-700"><i data-lucide="users" class="w-5 h-5 !text-gray-500"></i>Mes suivis</h2>
+                    <button id="new-youth-btn" class="btn btn-primary w-full mb-4"><i data-lucide="plus-circle" class="w-4 h-4 mr-2"></i>Nouveau diagnostic</button>
+                    <ul id="youth-list" class="bg-gray-50 rounded-md max-h-96 overflow-y-auto">
+                        </ul>
+                </div>
+            </aside>
+
+            <main class="md:w-2/3 lg:w-3/4">
+                <form id="analysis-form" onsubmit="return false;">
+                    <input type="hidden" id="youth-id">
+
+                    <div class="form-section">
+                        <h2><i data-lucide="user-circle"></i>1. Identification de la situation</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div><label for="youth-name">Nom du jeune :</label><input type="text" id="youth-name" class="input" required></div>
+                            <div><label for="diag-date">Date du diagnostic :</label><input type="date" id="diag-date" class="input"></div>
+                            <div><label for="advisor-name">Nom du conseiller :</label><input type="text" id="advisor-name" class="input"></div>
+                            <div><label for="advisor-territory">Territoire / Antenne :</label><input type="text" id="advisor-territory" class="input"></div>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <h2><i data-lucide="users-round"></i>2. Qualification du profil mobilité</h2>
+                        <div class="space-y-4">
+                            <div class="profile-card"><div class="checkbox-group"><input type="checkbox" id="profil-autonome" class="checkbox"><label for="profil-autonome" class="font-bold text-green-700">🟩 Jeune autonome et déjà informé</label></div><p class="ml-7 text-sm">Projet clair, connaît les dispositifs, autonome sur les démarches, besoins limités au suivi et à la sécurisation.</p></div>
+                            <div class="profile-card"><div class="checkbox-group"><input type="checkbox" id="profil-motive" class="checkbox"><label for="profil-motive" class="font-bold text-orange-700">🟧 Jeune motivé mais peu informé</label></div><p class="ml-7 text-sm">Curieux, a besoin d’explorer, de comprendre les dispositifs et de lever des freins (administratif, budget, langue, réseau).</p></div>
+                            <div class="profile-card"><div class="checkbox-group"><input type="checkbox" id="profil-fragile" class="checkbox"><label for="profil-fragile" class="font-bold text-red-700">🟥 Jeune fragile / freins multiples</label></div><p class="ml-7 text-sm">Confiance en soi faible, freins personnels, sociaux, administratifs, linguistiques… nécessite un accompagnement renforcé et progressif.</p></div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2><i data-lucide="map"></i>3. Projet et Destination</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div><label for="destination-country">Pays de destination envisagé :</label><input type="text" id="destination-country" class="input" placeholder="Ex: Espagne, Canada..."></div>
+                            <div><label for="project-ideas">Idées de projet, secteurs d'intérêt :</label><textarea id="project-ideas" class="textarea" rows="4" placeholder="Ex: travailler dans l'hôtellerie, faire du volontariat avec les animaux, apprendre le design graphique..."></textarea></div>
+                        </div>
+                        <div class="mt-4">
+                             <div class="flex justify-between items-center mb-2">
+                                <label for="destinations-suggestions" class="label !mb-0">Pistes et suggestions :</label>
+                                <button type="button" id="generate-destinations-btn" class="btn btn-ai no-print"><i data-lucide="sparkles" class="w-4 h-4 mr-2"></i>Suggérer des pistes</button>
+                            </div>
+                            <textarea id="destinations-suggestions" class="textarea" rows="6" placeholder="Cliquez sur 'Suggérer des pistes' pour obtenir des idées de projets et de destinations adaptées..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2><i data-lucide="list-checks"></i>4. Grille d’analyse – Observation, freins, leviers et besoins</h2>
+                        <div id="analysis-grid-body"></div>
+                    </div>
+                    <div class="form-section">
+                        <h2><i data-lucide="user-check"></i>5. Diagnostic professionnel – Type de parcours</h2>
+                        <label class="label">Niveau de sécurisation requis :</label>
+                        <div class="flex space-x-4">
+                            <div class="radio-group"><input type="radio" name="parcours-type" id="type-autonome" class="radio"><label for="type-autonome">🟩 Autonome</label></div>
+                            <div class="radio-group"><input type="radio" name="parcours-type" id="type-progressif" class="radio"><label for="type-progressif">🟧 Progressif</label></div>
+                            <div class="radio-group"><input type="radio" name="parcours-type" id="type-renforce" class="radio"><label for="type-renforce">🟥 Renforcé</label></div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2><i data-lucide="goal"></i>6. Construction du plan d’accompagnement</h2>
+                        <div class="flex justify-between items-center mb-2">
+                            <label for="sequences" class="label !mb-0">📅 Séquences et étapes prévues :</label>
+                            <button type="button" id="generate-plan-btn" class="btn btn-ai no-print"><i data-lucide="sparkles" class="w-4 h-4 mr-2"></i>Suggérer un plan</button>
+                        </div>
+                        <textarea id="sequences" class="textarea" rows="8" placeholder="Cliquez sur 'Suggérer un plan' pour une proposition ou rédigez manuellement..."></textarea>
+                        <div class="mt-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <label for="prep-advice" class="label !mb-0">💡 Conseils de préparation (culture, vie pratique) :</label>
+                                <button type="button" id="generate-prep-btn" class="btn btn-ai no-print"><i data-lucide="sparkles" class="w-4 h-4 mr-2"></i>Générer les conseils</button>
+                            </div>
+                            <textarea id="prep-advice" class="textarea" rows="6" placeholder="Renseignez un pays de destination puis cliquez sur 'Générer les conseils'..."></textarea>
+                        </div>
+                    </div>
+
+                     <div class="form-section">
+                        <h2><i data-lucide="plane-takeoff"></i>7. Pendant la mobilité – Cadre sécurisant</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+                            <div class="checkbox-group"><input type="checkbox" id="pdt-referent" class="checkbox"><label for="pdt-referent">Référent local identifié (tuteur)</label></div>
+                            <div class="checkbox-group"><input type="checkbox" id="pdt-hebergement" class="checkbox"><label for="pdt-hebergement">Hébergement sécurisé et validé</label></div>
+                            <div class="checkbox-group"><input type="checkbox" id="pdt-soutien" class="checkbox"><label for="pdt-soutien">Soutien financier assuré</label></div>
+                            <div class="checkbox-group"><input type="checkbox" id="pdt-suivi" class="checkbox"><label for="pdt-suivi">Suivi régulier (visios, appels...)</label></div>
+                            <div class="checkbox-group"><input type="checkbox" id="pdt-plan" class="checkbox"><label for="pdt-plan">Plan d’intervention en cas de difficulté</label></div>
+                            <div class="checkbox-group"><input type="checkbox" id="pdt-objectifs" class="checkbox"><label for="pdt-objectifs">Vérification des objectifs de compétences</label></div>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <h2><i data-lucide="trophy"></i>8. Après la mobilité – Valorisation</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+                             <div class="checkbox-group"><input type="checkbox" id="apr-entretien" class="checkbox"><label for="apr-entretien">Entretien retour structuré</label></div>
+                             <div class="checkbox-group"><input type="checkbox" id="apr-valorisation" class="checkbox"><label for="apr-valorisation">Valorisation des acquis (Europass, CV...)</label></div>
+                             <div class="checkbox-group"><input type="checkbox" id="apr-miseajour" class="checkbox"><label for="apr-miseajour">Mise à jour du PACEA ou CEJ</label></div>
+                             <div class="checkbox-group"><input type="checkbox" id="apr-integration" class="checkbox"><label for="apr-integration">Intégration des compétences au projet pro</label></div>
+                             <div class="checkbox-group"><input type="checkbox" id="apr-partage" class="checkbox"><label for="apr-partage">Partage d’expérience (mentorat, forums)</label></div>
+                             <div class="checkbox-group"><input type="checkbox" id="apr-projection" class="checkbox"><label for="apr-projection">Projection vers une nouvelle étape</label></div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2><i data-lucide="clipboard-check"></i>9. Synthèse et validation du plan partagé</h2>
+                        <div class="flex justify-between items-center mb-2">
+                            <label for="summary-analysis" class="label !mb-0">Résumé de l’analyse :</label>
+                            <button type="button" id="generate-summary-btn" class="btn btn-ai no-print"><i data-lucide="sparkles" class="w-4 h-4 mr-2"></i>Générer la synthèse</button>
+                        </div>
+                        <textarea id="summary-analysis" class="textarea" rows="6" placeholder="Cliquez sur 'Générer la synthèse' pour une proposition ou rédigez manuellement..."></textarea>
+
+                        <div class="mt-4"><label for="summary-plan">Plan d’action validé et engagements réciproques :</label><textarea id="summary-plan" class="textarea" rows="4"></textarea></div>
+                        <div class="mt-4"><label for="summary-timeline">Rétroplanning / échéances clés :</label><textarea id="summary-timeline" class="textarea" rows="4"></textarea></div>
+                    </div>
+                </form>
+            </main>
+        </div>
+    </div>
+
+    <div id="loading-overlay" class="fixed inset-0 z-[70] flex-col items-center justify-center bg-gray-900 bg-opacity-60 hidden no-print">
+        <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-24 w-24 mb-4"></div>
+        <h2 class="text-center text-white text-xl font-semibold">Génération par l'IA en cours...</h2>
+        <p class="text-center text-white">Veuillez patienter.</h2>
+    </div>
+
+    <div id="message-modal" class="fixed inset-0 z-[70] flex items-center justify-center bg-gray-900 bg-opacity-60 hidden no-print p-4">
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full transform transition-all scale-95 opacity-0" id="message-modal-content">
+            <div class="flex items-center justify-between mb-4">
+                <h3 id="message-modal-title" class="text-lg font-bold">Message</h3>
+                <button id="close-message-modal-btn" class="text-gray-500 hover:text-gray-800 text-2xl leading-none">&times;</button>
+            </div>
+            <p id="message-modal-text" class="text-gray-700">Message content here.</p>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+
+            // --- UI Elements ---
+            const startScreen = document.getElementById('start-screen');
+            const startBtn = document.getElementById('start-diag-btn');
+            const mainContent = document.getElementById('main-content');
+            const form = document.getElementById('analysis-form');
+            const youthIdField = document.getElementById('youth-id');
+            const youthNameField = document.getElementById('youth-name');
+            const youthList = document.getElementById('youth-list');
+            const analysisGridBody = document.getElementById('analysis-grid-body');
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const messageModal = document.getElementById('message-modal');
+            const messageModalContent = document.getElementById('message-modal-content');
+            const messageModalTitle = document.getElementById('message-modal-title');
+            const messageModalText = document.getElementById('message-modal-text');
+            const closeMessageModalBtn = document.getElementById('close-message-modal-btn');
+
+            // --- State and DB ---
+            const DB_NAME = 'mobilityDiagnosticsDB_v5';
+            let currentYouthId = null;
+
+            // --- Data Structure ---
+            const analysisDomains = [
+                { id: 'admin', emoji: '🗂️', title: 'Autonomie administrative', questions: [ { id: 'q1', text: 'Le jeune sait-il gérer ses démarches administratives seul ?', answers: ['Oui', 'En partie', 'Non, a besoin d\'un soutien constant'] }, { id: 'q2', text: 'Dispose-t-il de ses papiers (passeport, etc.) ?', answers: ['Oui, tout est à jour', 'En cours', 'Non, aucune démarche entamée'] }, { id: 'q3', text: 'A-t-il déjà l’expérience de démarches longues ?', answers: ['Oui, plusieurs fois', 'Une ou deux fois', 'Jamais'] } ]},
+                { id: 'estime', emoji: '🫶', title: 'Estime de soi / Bien-être / Confiance', questions: [ { id: 'q1', text: 'Le jeune semble-t-il confiant dans sa capacité à partir ?', answers: ['Oui, très confiant', 'Assez confiant, avec quelques doutes', 'Peu confiant, beaucoup d\'appréhension'] }, { id: 'q2', text: 'A-t-il exprimé des doutes, de l’anxiété, des peurs ?', answers: ['Non, pas de peurs exprimées', 'Oui, quelques-unes (solitude, etc.)', 'Oui, des peurs importantes'] }, { id: 'q3', text: 'Présente-t-il des fragilités particulières ?', answers: ['Non, pas à ma connaissance', 'Oui, légères (stress)', 'Oui, importantes à prendre en compte'] } ]},
+                { id: 'langues', emoji: '🗣️', title: 'Compétences linguistiques', questions: [ { id: 'q1', text: 'Quel est son niveau de confort avec la langue ?', answers: ['À l\'aise (B1/B2)', 'Débutant (A1/A2)', 'Aucune connaissance'] }, { id: 'q2', text: 'A-t-il déjà utilisé une langue étrangère en contexte ?', answers: ['Oui, régulièrement', 'Occasionnellement', 'Jamais'] }, { id: 'q3', text: 'Ce frein est-il bloquant ou mobilisable ?', answers: ['Non, facilement mobilisable', 'Oui, nécessite une préparation sérieuse', 'Oui, très bloquant'] } ]},
+                { id: 'interculturel', emoji: '🌍', title: 'Appétence interculturelle / Adaptabilité', questions: [ { id: 'q1', text: 'A-t-il déjà vécu des expériences hors de son environnement ?', answers: ['Oui, plusieurs expériences significatives', 'Oui, quelques voyages ou rencontres', 'Non, jamais'] }, { id: 'q2', text: 'Comment réagit-il à l’idée de vivre dans un environnement différent ?', answers: ['Très enthousiaste et curieux', 'Un mélange de curiosité et d\'inquiétude', 'Plutôt inquiet et réticent'] } ]},
+                { id: 'orga', emoji: '📅', title: 'Compétences organisationnelles et logistiques', questions: [ { id: 'q1', text: 'Le jeune sait-il organiser un projet ?', answers: ['Oui, de manière autonome', 'En partie, avec un cadre', 'Non, a besoin d\'être guidé'] }, { id: 'q2', text: 'A-t-il déjà mené des démarches complexes seul ?', answers: ['Oui', 'Rarement', 'Non'] } ]},
+                { id: 'finances', emoji: '💰', title: 'Ressources financières', questions: [ { id: 'q1', text: 'Ses ressources sont-elles suffisantes ?', answers: ['Oui, budget sécurisé', 'Partiellement, des aides sont nécessaires', 'Non, situation financière très précaire'] }, { id: 'q2', text: 'Est-il informé des aides possibles ?', answers: ['Oui, bien informé', 'Partiellement', 'Pas du tout'] } ]},
+                { id: 'soutien', emoji: '🧑‍🤝‍🧑', title: 'Réseau de soutien', questions: [ { id: 'q1', text: 'Le jeune est-il soutenu par son entourage ?', answers: ['Oui, totalement', 'Modérément ou neutre', 'Non, l\'entourage est un frein'] }, { id: 'q2', text: 'A-t-il un réseau mobilisable sur place ou à distance ?', answers: ['Oui', 'Un peu', 'Non'] } ]}
+            ];
+
+            // --- UI Functions ---
+            const showLoading = (show) => {
+                const aiButtons = document.querySelectorAll('.btn-ai');
+                if (show) {
+                    loadingOverlay.classList.remove('hidden');
+                    loadingOverlay.classList.add('flex');
+                    aiButtons.forEach(btn => btn.disabled = true);
+                } else {
+                    loadingOverlay.classList.remove('flex');
+                    loadingOverlay.classList.add('hidden');
+                    aiButtons.forEach(btn => btn.disabled = false);
+                }
+            };
+
+            const showMessage = (title, text, isError = false) => {
+                messageModalTitle.textContent = title;
+                messageModalText.innerHTML = text; // Use innerHTML to allow for basic formatting if needed
+                messageModalTitle.className = isError ? 'text-lg font-bold text-red-700' : 'text-lg font-bold text-blue-700';
+                messageModal.classList.remove('hidden');
+                messageModal.classList.add('flex');
+                setTimeout(() => {
+                    messageModalContent.classList.remove('scale-95', 'opacity-0');
+                }, 10);
+            };
+
+            const hideMessage = () => {
+                messageModalContent.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    messageModal.classList.add('hidden');
+                    messageModal.classList.remove('flex');
+                }, 200);
+            };
+
+            // --- Form and Data Functions ---
+            function generateAnalysisGrid() {
+                analysisGridBody.innerHTML = '';
+                analysisDomains.forEach(domain => {
+                    const domainEl = document.createElement('div');
+                    domainEl.className = 'analysis-domain';
+                    const questionsHTML = domain.questions.map(q => `
+                        <div class="mb-4">
+                            <p class="analysis-question">${q.text}</p>
+                            <div class="analysis-responses">${q.answers.map((ans, aIndex) => `
+                                <div class="radio-group">
+                                    <input type="radio" name="${domain.id}-${q.id}" id="${domain.id}-${q.id}-${aIndex}" value="${aIndex}" class="radio">
+                                    <label for="${domain.id}-${q.id}-${aIndex}" class="font-normal">${ans}</label>
+                                </div>`).join('')}
+                            </div>
+                        </div>`).join('');
+                    domainEl.innerHTML = `
+                        <h3>${domain.emoji} ${domain.title}</h3>
+                        ${questionsHTML}
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                            <div><label for="obs-${domain.id}" class="text-sm">→ Observations :</label><textarea id="obs-${domain.id}" data-field="observations" data-domain="${domain.id}" class="textarea" rows="3"></textarea></div>
+                            <div><label for="freins-${domain.id}" class="text-sm">→ Freins éventuels :</label><textarea id="freins-${domain.id}" data-field="freins" data-domain="${domain.id}" class="textarea" rows="3"></textarea></div>
+                            <div><label for="besoins-${domain.id}" class="text-sm">→ Besoins identifiés :</label><textarea id="besoins-${domain.id}" data-field="besoins" data-domain="${domain.id}" class="textarea" rows="3"></textarea></div>
+                        </div>`;
+                    analysisGridBody.appendChild(domainEl);
+                });
+            }
+
+            function getFormData() {
+                const analysisGridData = {};
+                analysisDomains.forEach(domain => {
+                    const questionData = {};
+                    domain.questions.forEach(q => {
+                        const checkedRadio = document.querySelector(`input[name="${domain.id}-${q.id}"]:checked`);
+                        questionData[q.id] = checkedRadio ? checkedRadio.value : null;
+                    });
+                    analysisGridData[domain.id] = {
+                        questions: questionData,
+                        observations: document.querySelector(`textarea[data-domain='${domain.id}'][data-field='observations']`).value,
+                        freins: document.querySelector(`textarea[data-domain='${domain.id}'][data-field='freins']`).value,
+                        besoins: document.querySelector(`textarea[data-domain='${domain.id}'][data-field='besoins']`).value,
+                    };
+                });
+                return {
+                    id: currentYouthId || crypto.randomUUID(),
+                    name: youthNameField.value,
+                    diagDate: document.getElementById('diag-date').value,
+                    advisorName: document.getElementById('advisor-name').value,
+                    advisorTerritory: document.getElementById('advisor-territory').value,
+                    profil: { autonome: document.getElementById('profil-autonome').checked, motive: document.getElementById('profil-motive').checked, fragile: document.getElementById('profil-fragile').checked },
+                    destinationCountry: document.getElementById('destination-country').value,
+                    projectIdeas: document.getElementById('project-ideas').value,
+                    destinationsSuggestions: document.getElementById('destinations-suggestions').value,
+                    analysisGrid: analysisGridData,
+                    parcoursType: document.querySelector('input[name="parcours-type"]:checked')?.id || '',
+                    sequences: document.getElementById('sequences').value,
+                    prepAdvice: document.getElementById('prep-advice').value,
+                    pendant: { referent: document.getElementById('pdt-referent').checked, hebergement: document.getElementById('pdt-hebergement').checked, soutien: document.getElementById('pdt-soutien').checked, suivi: document.getElementById('pdt-suivi').checked, plan: document.getElementById('pdt-plan').checked, objectifs: document.getElementById('pdt-objectifs').checked },
+                    apres: { entretien: document.getElementById('apr-entretien').checked, valorisation: document.getElementById('apr-valorisation').checked, miseajour: document.getElementById('apr-miseajour').checked, integration: document.getElementById('apr-integration').checked, partage: document.getElementById('apr-partage').checked, projection: document.getElementById('apr-projection').checked },
+                    summaryAnalysis: document.getElementById('summary-analysis').value,
+                    summaryPlan: document.getElementById('summary-plan').value,
+                    summaryTimeline: document.getElementById('summary-timeline').value,
+                };
+            }
+
+            function setFormData(data) {
+                clearForm();
+                currentYouthId = data.id;
+                youthIdField.value = data.id;
+                youthNameField.value = data.name || '';
+                document.getElementById('diag-date').value = data.diagDate || '';
+                document.getElementById('advisor-name').value = data.advisorName || '';
+                document.getElementById('advisor-territory').value = data.advisorTerritory || '';
+                if(data.profil){
+                    document.getElementById('profil-autonome').checked = data.profil.autonome || false;
+                    document.getElementById('profil-motive').checked = data.profil.motive || false;
+                    document.getElementById('profil-fragile').checked = data.profil.fragile || false;
+                }
+                document.getElementById('destination-country').value = data.destinationCountry || '';
+                document.getElementById('project-ideas').value = data.projectIdeas || '';
+                document.getElementById('destinations-suggestions').value = data.destinationsSuggestions || '';
+                if (data.analysisGrid) {
+                    analysisDomains.forEach(domain => {
+                        const domainData = data.analysisGrid[domain.id];
+                        if (domainData) {
+                            if (domainData.questions) { for (const [qId, qValue] of Object.entries(domainData.questions)) { if (qValue !== null) { const radioToCheck = document.querySelector(`input[name="${domain.id}-${qId}"][value="${qValue}"]`); if (radioToCheck) radioToCheck.checked = true; } } }
+                            document.querySelector(`textarea[data-domain='${domain.id}'][data-field='observations']`).value = domainData.observations || '';
+                            document.querySelector(`textarea[data-domain='${domain.id}'][data-field='freins']`).value = domainData.freins || '';
+                            document.querySelector(`textarea[data-domain='${domain.id}'][data-field='besoins']`).value = domainData.besoins || '';
+                        }
+                    });
+                }
+                if(data.parcoursType) document.getElementById(data.parcoursType).checked = true;
+                document.getElementById('sequences').value = data.sequences || '';
+                document.getElementById('prep-advice').value = data.prepAdvice || '';
+                if (data.pendant) { for (const [key, value] of Object.entries(data.pendant)) { const el = document.getElementById(`pdt-${key}`); if (el) el.checked = value; } }
+                if (data.apres) { for (const [key, value] of Object.entries(data.apres)) { const el = document.getElementById(`apr-${key}`); if (el) el.checked = value; } }
+                document.getElementById('summary-analysis').value = data.summaryAnalysis || '';
+                document.getElementById('summary-plan').value = data.summaryPlan || '';
+                document.getElementById('summary-timeline').value = data.summaryTimeline || '';
+            }
+
+            function clearForm() {
+                form.reset();
+                youthIdField.value = '';
+                currentYouthId = null;
+                document.querySelectorAll('#youth-list li.active').forEach(el => el.classList.remove('active'));
+                youthNameField.focus();
+            }
+
+            // --- Local Storage Functions ---
+            function saveYouthData() {
+                if (!youthNameField.value.trim()) {
+                    showMessage("Erreur", "Le nom du jeune est obligatoire.", true);
+                    youthNameField.focus();
+                    return;
+                }
+                const data = getFormData();
+                const db = JSON.parse(localStorage.getItem(DB_NAME)) || {};
+                db[data.id] = data;
+                localStorage.setItem(DB_NAME, JSON.stringify(db));
+                currentYouthId = data.id;
+                renderYouthList();
+                showMessage("Sauvegarde", "Le diagnostic a été sauvegardé avec succès.");
+            }
+
+            function loadYouthData(id) {
+                const db = JSON.parse(localStorage.getItem(DB_NAME)) || {};
+                if (db[id]) {
+                    setFormData(db[id]);
+                    currentYouthId = id;
+                    document.querySelectorAll('#youth-list li').forEach(li => li.classList.toggle('active', li.dataset.id === id));
+                }
+            }
+
+            function deleteYouthData(id, name) {
+                const db = JSON.parse(localStorage.getItem(DB_NAME)) || {};
+                delete db[id];
+                localStorage.setItem(DB_NAME, JSON.stringify(db));
+                if (currentYouthId === id) {
+                    clearForm();
+                }
+                renderYouthList();
+            }
+
+            function renderYouthList() {
+                const db = JSON.parse(localStorage.getItem(DB_NAME)) || {};
+                const youths = Object.values(db).sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+                youthList.innerHTML = '';
+                if (youths.length === 0) {
+                    youthList.innerHTML = `<li class="text-center text-gray-500 p-4">Aucun suivi.</li>`;
+                    return;
+                }
+                youths.forEach(youth => {
+                    const li = document.createElement('li');
+                    li.dataset.id = youth.id;
+                    li.className = `transition-all ${currentYouthId === youth.id ? 'active' : ''}`;
+                    li.innerHTML = `
+                        <span class="flex-1 font-medium py-1">${youth.name || 'Sans nom'}</span>
+                        <button data-delete-id="${youth.id}" data-delete-name="${youth.name}" class="delete-btn btn-danger p-1 rounded-full w-6 h-6 flex items-center justify-center opacity-25 hover:opacity-100 transition-opacity">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>`;
+                    li.querySelector('span').addEventListener('click', () => loadYouthData(youth.id));
+                    youthList.appendChild(li);
+                });
+                lucide.createIcons();
+            }
+
+            // --- Gemini API Integration ---
+            function getPromptData() {
+                const data = getFormData();
+                let text = `Analyse du diagnostic de mobilité pour ${data.name || 'le jeune'}:\n\n`;
+                text += `== Identification ==\n`;
+                text += `Date: ${data.diagDate || 'Non spécifié'}\n`;
+                text += `Profil mobilité: `;
+                const profils = [];
+                if (data.profil.autonome) profils.push("Autonome et informé");
+                if (data.profil.motive) profils.push("Motivé mais peu informé");
+                if (data.profil.fragile) profils.push("Fragile / freins multiples");
+                text += profils.join(', ') || 'Non qualifié';
+                text += `\nType de parcours préconisé: ${document.querySelector(`label[for=${data.parcoursType}]`)?.textContent || 'Non spécifié'}\n\n`;
+
+                text += `== Projet et Destination ==\n`;
+                text += `Pays envisagé: ${data.destinationCountry || 'Non spécifié'}\n`;
+                text += `Idées / Intérêts du jeune: ${data.projectIdeas || 'Non spécifié'}\n\n`;
+
+                text += `== Analyse détaillée par domaine ==\n`;
+                analysisDomains.forEach(domain => {
+                    const domainData = data.analysisGrid[domain.id];
+                    if (domainData) {
+                        text += `\n-- ${domain.title} --\n`;
+                        let hasAnswers = false;
+                        domain.questions.forEach(q => {
+                            const answerIndex = domainData.questions[q.id];
+                            if (answerIndex !== null) {
+                                hasAnswers = true;
+                                text += `Q: ${q.text}\nR: ${q.answers[answerIndex]}\n`;
+                            }
+                        });
+                        if (domainData.observations) { text += `Observations du conseiller: ${domainData.observations}\n`; hasAnswers = true; }
+                        if (domainData.freins) { text += `Freins identifiés: ${domainData.freins}\n`; hasAnswers = true; }
+                        if (domainData.besoins) { text += `Besoins identifiés: ${domainData.besoins}\n`; hasAnswers = true; }
+                        if (!hasAnswers) text += "Aucune information renseignée pour ce domaine.\n";
+                    }
+                });
+                return text;
+            }
+
+            async function callGeminiAPI(prompt) {
+                showLoading(true);
+                const apiKey = ""; // Provided by the environment
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+                    if (!response.ok) {
+                        throw new Error(`Erreur de l'API: ${result.error?.message || response.statusText}`);
+                    }
+                    if (result.candidates && result.candidates.length > 0 && result.candidates[0].content.parts[0].text) {
+                        return result.candidates[0].content.parts[0].text;
+                    } else if (result.promptFeedback && result.promptFeedback.blockReason) {
+                        throw new Error(`Le contenu a été bloqué. Raison: ${result.promptFeedback.blockReason}`);
+                    } else {
+                        throw new Error("La réponse de l'API est vide ou mal formée.");
+                    }
+                } catch (error) {
+                    console.error("Error calling Gemini API:", error);
+                    showMessage("Erreur de l'API", `Impossible de générer le contenu. <br>Détail: ${error.message}`, true);
+                    return null;
+                } finally {
+                    showLoading(false);
+                }
+            }
+
+            // --- Event Listeners ---
+            startBtn.addEventListener('click', () => {
+                startScreen.classList.add('hidden');
+                mainContent.classList.remove('hidden');
+            });
+            document.getElementById('save-btn').addEventListener('click', saveYouthData);
+            document.getElementById('new-youth-btn').addEventListener('click', clearForm);
+            document.getElementById('print-btn').addEventListener('click', () => window.print());
+            closeMessageModalBtn.addEventListener('click', hideMessage);
+            youthList.addEventListener('click', (e) => {
+                const deleteBtn = e.target.closest('.delete-btn');
+                if (deleteBtn) {
+                    e.stopPropagation();
+                    showMessage("Confirmation", `Supprimer le diagnostic de "${deleteBtn.dataset.deleteName}" ?<br><br><button id="confirm-delete" class="btn btn-danger">Confirmer</button>`, false);
+                    document.getElementById('confirm-delete').onclick = () => {
+                        deleteYouthData(deleteBtn.dataset.deleteId, deleteBtn.dataset.deleteName);
+                        hideMessage();
+                    };
+                }
+            });
+
+            document.getElementById('generate-destinations-btn').addEventListener('click', async () => {
+                const diagnosticData = getPromptData();
+                const prompt = `Tu es un conseiller d'orientation expert en mobilité internationale. En te basant sur le profil et les intérêts du jeune décrits ci-dessous, suggère 3 à 5 pistes concrètes et variées de projets de mobilité (pays, type de mission : volontariat, stage, emploi saisonnier, etc.). Pour chaque piste, explique brièvement pourquoi elle est pertinente pour le jeune. Formate la réponse en Markdown.\n\n---\n\n${diagnosticData}`;
+                const suggestions = await callGeminiAPI(prompt);
+                if (suggestions) {
+                    document.getElementById('destinations-suggestions').value = suggestions;
+                    showMessage("Succès", "Les suggestions de pistes ont été générées.");
+                }
+            });
+
+            document.getElementById('generate-prep-btn').addEventListener('click', async () => {
+                const destination = document.getElementById('destination-country').value;
+                if (!destination.trim()) {
+                    showMessage("Information manquante", "Veuillez renseigner un pays de destination dans la section 3 avant de générer les conseils.", true);
+                    return;
+                }
+                const diagnosticData = getPromptData();
+                const prompt = `Tu es un conseiller expert en mobilité internationale. Le jeune prépare un départ pour : ${destination}. En te basant sur son profil complet ci-dessous, génère une liste de conseils de préparation pratiques et interculturels. Insiste sur les points qui pourraient répondre à ses freins identifiés. Organise les conseils par thèmes (ex: Vie quotidienne, Argent, Communication, Us et coutumes, Sécurité). Formate la réponse en Markdown.\n\n---\n\n${diagnosticData}`;
+                const advice = await callGeminiAPI(prompt);
+                if (advice) {
+                    document.getElementById('prep-advice').value = advice;
+                    showMessage("Succès", "Les conseils de préparation ont été générés.");
+                }
+            });
+
+            document.getElementById('generate-summary-btn').addEventListener('click', async () => {
+                const diagnosticData = getPromptData();
+                const prompt = `Tu es un conseiller expert en mobilité internationale. En te basant sur les informations suivantes, rédige une synthèse de diagnostic claire, professionnelle et structurée en Markdown. La synthèse doit mettre en évidence les points forts, les freins principaux, et les besoins prioritaires du jeune. Termine par une recommandation sur le type de parcours d'accompagnement.\n\n---\n\n${diagnosticData}`;
+                const summary = await callGeminiAPI(prompt);
+                if (summary) {
+                    document.getElementById('summary-analysis').value = summary;
+                    showMessage("Succès", "La synthèse a été générée.");
+                }
+            });
+
+            document.getElementById('generate-plan-btn').addEventListener('click', async () => {
+                const diagnosticData = getPromptData();
+                const prompt = `Tu es un conseiller expert en mobilité internationale. En te basant sur le diagnostic suivant, propose un plan d'accompagnement structuré et détaillé en Markdown (séquences et étapes). Le plan doit être concret, réaliste, et répondre aux besoins et freins identifiés. Suggère des actions spécifiques (ex: atelier CV, session d'info sur les visas, cours de langue en ligne, rdv avec un psychologue) et organise-les de manière logique (ex: par phase ou par semaine).\n\n---\n\n${diagnosticData}`;
+                const plan = await callGeminiAPI(prompt);
+                if (plan) {
+                    document.getElementById('sequences').value = plan;
+                    showMessage("Succès", "Le plan d'accompagnement a été suggéré.");
+                }
+            });
+
+            // --- Initial Load ---
+            generateAnalysisGrid();
+            renderYouthList();
+            document.getElementById('diag-date').valueAsDate = new Date();
+        });
+    </script>
+</body>
+</html>
