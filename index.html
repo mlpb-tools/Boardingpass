@@ -88,7 +88,7 @@
         .btn-secondary:hover:not(:disabled) { background-color: #d1d5db; }
         .btn-danger { background-color: #dc2626; color: white; }
         .btn-danger:hover:not(:disabled) { background-color: #b91c1c; }
-        
+
         #youth-list li {
             padding: 0.75rem;
             border-bottom: 1px solid #e5e7eb;
@@ -100,9 +100,9 @@
         }
         #youth-list li:hover, #youth-list li.active { background-color: #eff6ff; }
         #youth-list li:last-child { border-bottom: none; }
-        
+
         .profile-card { border: 2px solid #e5e7eb; border-radius: 0.5rem; padding: 1rem; transition: border-color 0.2s; }
-        
+
         .analysis-domain {
             padding: 1.5rem;
             border: 1px solid #e5e7eb;
@@ -113,7 +113,6 @@
         .analysis-question { font-size: 0.9rem; color: #4b5563; margin-bottom: 0.75rem; font-weight: 500; }
         .analysis-responses { display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 1rem; }
         .hidden { display: none; }
-
         .language-assessment {
             padding: 1rem;
             border: 1px solid #e5e7eb;
@@ -130,7 +129,7 @@
             flex-wrap: wrap;
             gap: 1rem;
         }
-        
+
         @media print {
             body { background-color: white; }
             .no-print { display: none; }
@@ -141,7 +140,6 @@
     </style>
 </head>
 <body class="bg-slate-100">
-
     <!-- Splash Screen -->
     <div id="start-screen" class="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-slate-100 p-4">
         <img src="https://images.pexels.com/photos/2387793/pexels-photo-2387793.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Jeunes regardant une carte du monde" class="w-64 h-64 object-cover rounded-full mb-8 shadow-lg">
@@ -149,7 +147,6 @@
         <p class="text-gray-600 mb-8 text-center">Outil d'analyse et de définition du parcours de préparation au départ.</p>
         <button id="start-diag-btn" class="btn btn-primary text-lg px-8 py-3">Commencer</button>
     </div>
-
     <!-- Main Content -->
     <div id="main-content" class="container mx-auto p-4 md:p-8 hidden">
         <header class="no-print mb-8 flex flex-col md:flex-row justify-between items-center">
@@ -162,7 +159,6 @@
                 <button id="save-btn" class="btn btn-primary"><i data-lucide="save" class="w-4 h-4 mr-2"></i>Sauvegarder</button>
             </div>
         </header>
-
         <div class="flex flex-col md:flex-row gap-8">
             <!-- Left Column: Youth List -->
             <aside class="md:w-1/3 lg:w-1/4 no-print">
@@ -174,12 +170,11 @@
                     </ul>
                 </div>
             </aside>
-
             <!-- Right Column: Analysis Form -->
             <main class="md:w-2/3 lg:w-3/4">
                 <form id="analysis-form" onsubmit="return false;">
                     <input type="hidden" id="youth-id">
-                    
+
                     <div class="form-section">
                         <h2><i data-lucide="user-circle"></i>1. Identification de la situation</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -197,7 +192,6 @@
                             <div class="profile-card"><div class="checkbox-group"><input type="checkbox" id="profil-fragile" class="checkbox"><label for="profil-fragile" class="font-bold text-red-700">🟥 Jeune fragile / freins multiples</label></div><p class="ml-7 text-sm">Confiance en soi faible, freins personnels, sociaux, administratifs, linguistiques… nécessite un accompagnement renforcé et progressif.</p></div>
                         </div>
                     </div>
-
                     <div class="form-section">
                         <h2><i data-lucide="map-pin"></i>3. Idées de destination et de projet</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -207,7 +201,7 @@
                         <div class="mt-6"><label for="project-geo">Pays ou zones géographiques souhaités :</label><input type="text" id="project-geo" class="input" placeholder="Ex: Espagne, Amérique Latine, pays anglophones..."></div>
                         <div class="mt-6"><label for="project-suggestions">Pistes de destinations / projets :</label><textarea id="project-suggestions" class="textarea" rows="4" placeholder="Notez ici les pistes évoquées..."></textarea></div>
                     </div>
-                    
+
                     <!-- MODIFIED SECTION -->
                     <div class="form-section">
                         <h2><i data-lucide="languages"></i>4. Compétences linguistiques</h2>
@@ -215,7 +209,6 @@
                             <!-- Languages will be injected here by JS -->
                         </div>
                     </div>
-
                     <div class="form-section">
                         <h2><i data-lucide="list-checks"></i>5. Grille d’analyse – Observation, freins, leviers et besoins</h2>
                         <div id="analysis-grid-body"></div>
@@ -229,13 +222,11 @@
                             <div class="radio-group"><input type="radio" name="parcours-type" id="type-renforce" class="radio"><label for="type-renforce">🟥 Renforcé</label></div>
                         </div>
                     </div>
-
                     <div class="form-section">
                         <h2><i data-lucide="goal"></i>7. Construction du plan d’accompagnement</h2>
                         <label for="sequences" class="label">📅 Séquences et étapes prévues :</label>
                         <textarea id="sequences" class="textarea" rows="8" placeholder="Décrivez ici les étapes du plan d'accompagnement..."></textarea>
                     </div>
-
                      <div class="form-section">
                         <h2><i data-lucide="plane-takeoff"></i>8. Pendant la mobilité – Cadre sécurisant</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
@@ -258,7 +249,6 @@
                              <div class="checkbox-group"><input type="checkbox" id="apr-projection" class="checkbox"><label for="apr-projection">Projection vers une nouvelle étape</label></div>
                         </div>
                     </div>
-
                     <div class="form-section">
                         <h2><i data-lucide="clipboard-check"></i>10. Synthèse et validation du plan partagé</h2>
                         <div><label for="summary-analysis" class="label">Résumé de l’analyse :</label><textarea id="summary-analysis" class="textarea" rows="6" placeholder="Rédigez ici la synthèse du diagnostic..."></textarea></div>
@@ -269,7 +259,6 @@
             </main>
         </div>
     </div>
-
     <!-- Custom Modal for Messages/Errors -->
     <div id="message-modal" class="fixed inset-0 z-[70] flex items-center justify-center bg-gray-900 bg-opacity-60 hidden no-print p-4">
         <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full transform transition-all scale-95 opacity-0" id="message-modal-content">
@@ -280,12 +269,10 @@
             <p id="message-modal-text" class="text-gray-700">Message content here.</p>
         </div>
     </div>
-
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
-            
+
             // --- UI Elements ---
             const startScreen = document.getElementById('start-screen');
             const startBtn = document.getElementById('start-diag-btn');
@@ -301,7 +288,7 @@
             const messageModalTitle = document.getElementById('message-modal-title');
             const messageModalText = document.getElementById('message-modal-text');
             const closeMessageModalBtn = document.getElementById('close-message-modal-btn');
-            
+
             // --- State and DB ---
             const DB_NAME = 'mobilityDiagnosticsDB_v7_no_ai';
             let currentYouthId = null;
@@ -312,15 +299,17 @@
                 { key: 'es', name: 'Espagnol' },
                 { key: 'it', name: 'Italien' },
                 { key: 'de', name: 'Allemand' },
-                { key: 'eu', name: 'Basque' }
-                Autre langue <input type="text" placeholder="Compléter la langue" style="width:120px;" /> Niveau: [inchangé]
+                { key: 'eu', name: 'Basque' },
+                { key: 'other', name: 'Autre langue', custom: true }
             ];
+
             const languageLevels = [
                 { key: 'none', label: 'Aucune connaissance' },
                 { key: 'a1a2', label: 'Débutant (A1/A2)' },
                 { key: 'b1b2', label: 'Intermédiaire (B1/B2)' },
                 { key: 'c1c2', label: 'Avancé (C1/C2)' }
             ];
+
             const analysisDomains = [
                 { id: 'admin', emoji: '🗂️', title: 'Autonomie administrative', questions: [ { id: 'q1', text: 'Le jeune sait-il gérer ses démarches administratives seul ?', answers: ['Oui', 'En partie', 'Non, a besoin d\'un soutien constant'] }, { id: 'q2', text: 'Dispose-t-il de ses papiers (passeport, etc.) ?', answers: ['Oui, tout est à jour', 'En cours', 'Non, aucune démarche entamée'] }, { id: 'q3', text: 'A-t-il déjà l’expérience de démarches longues ?', answers: ['Oui, plusieurs fois', 'Une ou deux fois', 'Jamais'] } ]},
                 { id: 'estime', emoji: '🫶', title: 'Estime de soi / Bien-être / Confiance', questions: [ { id: 'q1', text: 'Le jeune semble-t-il confiant dans sa capacité à partir ?', answers: ['Oui, très confiant', 'Assez confiant, avec quelques doutes', 'Peu confiant, beaucoup d\'appréhension'] }, { id: 'q2', text: 'A-t-il exprimé des doutes, de l’anxiété, des peurs ?', answers: ['Non, pas de peurs exprimées', 'Oui, quelques-unes (solitude, etc.)', 'Oui, des peurs importantes'] }, { id: 'q3', text: 'Présente-t-il des fragilités particulières ?', answers: ['Non, pas à ma connaissance', 'Oui, légères (stress)', 'Oui, importantes à prendre en compte'] } ]},
@@ -349,20 +338,39 @@
             function generateLanguageAssessments() {
                 languageSkillsContainer.innerHTML = '';
                 languages.forEach(lang => {
-                    const levelsHTML = languageLevels.map(level => `
-                        <div class="radio-group">
-                            <input type="radio" name="lang-${lang.key}" id="lang-${lang.key}-${level.key}" value="${level.key}" class="radio">
-                            <label for="lang-${lang.key}-${level.key}" class="font-normal">${level.label}</label>
-                        </div>
-                    `).join('');
-
-                    const langEl = document.createElement('div');
-                    langEl.className = 'language-assessment';
-                    langEl.innerHTML = `
-                        <p class="language-name">${lang.name}</p>
-                        <div class="levels">${levelsHTML}</div>
-                    `;
-                    languageSkillsContainer.appendChild(langEl);
+                    if (lang.custom) {
+                        const langEl = document.createElement('div');
+                        langEl.className = 'language-assessment';
+                        langEl.innerHTML = `
+                            <p class="language-name">${lang.name}</p>
+                            <div class="flex items-center gap-2 mb-2">
+                                <input type="text" placeholder="Compléter la langue" class="input" style="width: 150px;" id="other-language-name">
+                            </div>
+                            <div class="levels">
+                                ${languageLevels.map(level => `
+                                    <div class="radio-group">
+                                        <input type="radio" name="lang-other" id="lang-other-${level.key}" value="${level.key}" class="radio">
+                                        <label for="lang-other-${level.key}" class="font-normal">${level.label}</label>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                        languageSkillsContainer.appendChild(langEl);
+                    } else {
+                        const levelsHTML = languageLevels.map(level => `
+                            <div class="radio-group">
+                                <input type="radio" name="lang-${lang.key}" id="lang-${lang.key}-${level.key}" value="${level.key}" class="radio">
+                                <label for="lang-${lang.key}-${level.key}" class="font-normal">${level.label}</label>
+                            </div>
+                        `).join('');
+                        const langEl = document.createElement('div');
+                        langEl.className = 'language-assessment';
+                        langEl.innerHTML = `
+                            <p class="language-name">${lang.name}</p>
+                            <div class="levels">${levelsHTML}</div>
+                        `;
+                        languageSkillsContainer.appendChild(langEl);
+                    }
                 });
             }
 
@@ -408,11 +416,19 @@
                         besoins: document.querySelector(`textarea[data-domain='${domain.id}'][data-field='besoins']`).value,
                     };
                 });
-                
+
                 const languageData = {};
                 languages.forEach(lang => {
-                    const checkedRadio = document.querySelector(`input[name="lang-${lang.key}"]:checked`);
-                    languageData[lang.key] = checkedRadio ? checkedRadio.value : null;
+                    if (lang.custom) {
+                        const otherLanguageName = document.getElementById('other-language-name').value;
+                        if (otherLanguageName) {
+                            const checkedRadio = document.querySelector(`input[name="lang-other"]:checked`);
+                            languageData['other'] = { name: otherLanguageName, level: checkedRadio ? checkedRadio.value : null };
+                        }
+                    } else {
+                        const checkedRadio = document.querySelector(`input[name="lang-${lang.key}"]:checked`);
+                        languageData[lang.key] = checkedRadio ? checkedRadio.value : null;
+                    }
                 });
 
                 return {
@@ -455,16 +471,18 @@
                 document.getElementById('project-duration').value = data.projectDuration || '';
                 document.getElementById('project-geo').value = data.projectGeo || '';
                 document.getElementById('project-suggestions').value = data.projectSuggestions || '';
-
                 if (data.languages) {
-                    for (const [langKey, levelKey] of Object.entries(data.languages)) {
-                        if (levelKey) {
-                            const radioToCheck = document.getElementById(`lang-${langKey}-${levelKey}`);
+                    for (const [langKey, langValue] of Object.entries(data.languages)) {
+                        if (langKey === 'other' && langValue.name) {
+                            document.getElementById('other-language-name').value = langValue.name;
+                            const radioToCheck = document.getElementById(`lang-other-${langValue.level}`);
+                            if (radioToCheck) radioToCheck.checked = true;
+                        } else if (langValue) {
+                            const radioToCheck = document.getElementById(`lang-${langKey}-${langValue}`);
                             if (radioToCheck) radioToCheck.checked = true;
                         }
                     }
                 }
-
                 if (data.analysisGrid) {
                     analysisDomains.forEach(domain => {
                         const domainData = data.analysisGrid[domain.id];
@@ -484,7 +502,7 @@
                 document.getElementById('summary-plan').value = data.summaryPlan || '';
                 document.getElementById('summary-timeline').value = data.summaryTimeline || '';
             }
-            
+
             function clearForm() {
                 form.reset();
                 youthIdField.value = '';
@@ -553,13 +571,15 @@
 
             // --- Event Listeners ---
             startBtn.addEventListener('click', () => {
-                startScreen.classList.add('hidden');
+                startScreen.style.display = 'none';
                 mainContent.classList.remove('hidden');
             });
+
             document.getElementById('save-btn').addEventListener('click', saveYouthData);
             document.getElementById('new-youth-btn').addEventListener('click', clearForm);
             document.getElementById('print-btn').addEventListener('click', () => window.print());
             closeMessageModalBtn.addEventListener('click', hideMessage);
+
             youthList.addEventListener('click', (e) => {
                 const deleteBtn = e.target.closest('.delete-btn');
                 if (deleteBtn) {
