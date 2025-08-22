@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Outil de Diagnostic Mobilité Internationale v5 (sans IA)</title>
+    <title>Outil de Diagnostic Mobilité Internationale v4</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -100,9 +100,9 @@
         }
         #youth-list li:hover, #youth-list li.active { background-color: #eff6ff; }
         #youth-list li:last-child { border-bottom: none; }
-
+        
         .profile-card { border: 2px solid #e5e7eb; border-radius: 0.5rem; padding: 1rem; transition: border-color 0.2s; }
-
+        
         .analysis-domain {
             padding: 1.5rem;
             border: 1px solid #e5e7eb;
@@ -113,44 +113,26 @@
         .analysis-question { font-size: 0.9rem; color: #4b5563; margin-bottom: 0.75rem; font-weight: 500; }
         .analysis-responses { display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 1rem; }
         .hidden { display: none; }
-        .language-assessment {
-            padding: 1rem;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        .language-assessment .language-name {
-            font-weight: 600;
-            color: #1e3a8a;
-            margin-bottom: 0.5rem;
-        }
-        .language-assessment .levels {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        #start-screen {
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-
+        
         @media print {
             body { background-color: white; }
             .no-print { display: none; }
             .form-section { box-shadow: none; border: 1px solid #e5e7eb; margin-bottom: 1rem; }
             .container { max-width: 100%; padding: 0; }
-            .textarea, .input { border: none; background-color: #f9fafb; }
+            .textarea, .input, .select { border: none; background-color: #f9fafb; }
         }
     </style>
 </head>
 <body class="bg-slate-100">
+
     <!-- Splash Screen -->
-    <div id="start-screen" class="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-slate-100 p-4" style="opacity: 1; visibility: visible;">
+    <div id="start-screen" class="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-slate-100 p-4">
         <img src="https://images.pexels.com/photos/2387793/pexels-photo-2387793.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Jeunes regardant une carte du monde" class="w-64 h-64 object-cover rounded-full mb-8 shadow-lg">
         <h1 class="text-4xl font-bold text-gray-800 text-center mb-4">Diag Mobilité internationale</h1>
         <p class="text-gray-600 mb-8 text-center">Outil d'analyse et de définition du parcours de préparation au départ.</p>
         <button id="start-diag-btn" class="btn btn-primary text-lg px-8 py-3">Commencer</button>
     </div>
+
     <!-- Main Content -->
     <div id="main-content" class="container mx-auto p-4 md:p-8 hidden">
         <header class="no-print mb-8 flex flex-col md:flex-row justify-between items-center">
@@ -163,6 +145,7 @@
                 <button id="save-btn" class="btn btn-primary"><i data-lucide="save" class="w-4 h-4 mr-2"></i>Sauvegarder</button>
             </div>
         </header>
+
         <div class="flex flex-col md:flex-row gap-8">
             <!-- Left Column: Youth List -->
             <aside class="md:w-1/3 lg:w-1/4 no-print">
@@ -174,11 +157,12 @@
                     </ul>
                 </div>
             </aside>
+
             <!-- Right Column: Analysis Form -->
             <main class="md:w-2/3 lg:w-3/4">
                 <form id="analysis-form" onsubmit="return false;">
                     <input type="hidden" id="youth-id">
-
+                    
                     <div class="form-section">
                         <h2><i data-lucide="user-circle"></i>1. Identification de la situation</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -196,29 +180,40 @@
                             <div class="profile-card"><div class="checkbox-group"><input type="checkbox" id="profil-fragile" class="checkbox"><label for="profil-fragile" class="font-bold text-red-700">🟥 Jeune fragile / freins multiples</label></div><p class="ml-7 text-sm">Confiance en soi faible, freins personnels, sociaux, administratifs, linguistiques… nécessite un accompagnement renforcé et progressif.</p></div>
                         </div>
                     </div>
-                    <div class="form-section">
-                        <h2><i data-lucide="map-pin"></i>3. Idées de destination et de projet</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div><label for="project-type">Type de projet envisagé :</label><input type="text" id="project-type" class="input" placeholder="Stage, volontariat, emploi, études..."></div>
-                            <div><label for="project-duration">Durée envisagée :</label><input type="text" id="project-duration" class="input" placeholder="Ex: 3 mois, 1 an..."></div>
+                     <div class="form-section">
+                        <h2><i data-lucide="map"></i>3. Niveau de projection dans le projet</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div>
+                                <label for="mobility-type">Type de mobilité :</label>
+                                <select id="mobility-type" class="select">
+                                    <option value="">Sélectionner...</option>
+                                    <option value="stage">Stage</option>
+                                    <option value="volontariat">Volontariat</option>
+                                    <option value="echange">Échange de jeune</option>
+                                    <option value="emploi">Emploi</option>
+                                </select>
+                            </div>
+                             <div>
+                                <label for="mobility-duration">Durée envisagée :</label>
+                                <select id="mobility-duration" class="select">
+                                    <option value="">Sélectionner...</option>
+                                    <option value="1w-1m">De une semaine à un mois</option>
+                                    <option value="1m-3m">Jusqu’à trois mois</option>
+                                    <option value="3m-12m">Jusqu’à 12 mois</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="mobility-destination">Idée de destination :</label>
+                                <input type="text" id="mobility-destination" class="input" placeholder="Ex: Espagne, Canada...">
+                            </div>
                         </div>
-                        <div class="mt-6"><label for="project-geo">Pays ou zones géographiques souhaités :</label><input type="text" id="project-geo" class="input" placeholder="Ex: Espagne, Amérique Latine, pays anglophones..."></div>
-                        <div class="mt-6"><label for="project-suggestions">Pistes de destinations / projets :</label><textarea id="project-suggestions" class="textarea" rows="4" placeholder="Notez ici les pistes évoquées..."></textarea></div>
-                    </div>
-
-                    <!-- MODIFIED SECTION -->
-                    <div class="form-section">
-                        <h2><i data-lucide="languages"></i>4. Compétences linguistiques</h2>
-                        <div id="language-skills-container">
-                            <!-- Languages will be injected here by JS -->
-                        </div>
                     </div>
                     <div class="form-section">
-                        <h2><i data-lucide="list-checks"></i>5. Grille d’analyse – Observation, freins, leviers et besoins</h2>
+                        <h2><i data-lucide="list-checks"></i>4. Grille d’analyse – Observation, freins, leviers et besoins</h2>
                         <div id="analysis-grid-body"></div>
                     </div>
                     <div class="form-section">
-                        <h2><i data-lucide="user-check"></i>6. Diagnostic professionnel – Type de parcours</h2>
+                        <h2><i data-lucide="user-check"></i>5. Diagnostic professionnel – Type de parcours</h2>
                         <label class="label">Niveau de sécurisation requis :</label>
                         <div class="flex space-x-4">
                             <div class="radio-group"><input type="radio" name="parcours-type" id="type-autonome" class="radio"><label for="type-autonome">🟩 Autonome</label></div>
@@ -227,12 +222,12 @@
                         </div>
                     </div>
                     <div class="form-section">
-                        <h2><i data-lucide="goal"></i>7. Construction du plan d’accompagnement</h2>
+                        <h2><i data-lucide="goal"></i>6. Construction du plan d’accompagnement</h2>
                         <label for="sequences" class="label">📅 Séquences et étapes prévues :</label>
-                        <textarea id="sequences" class="textarea" rows="8" placeholder="Décrivez ici les étapes du plan d'accompagnement..."></textarea>
+                        <textarea id="sequences" class="textarea" rows="8" placeholder="Décrire les différentes étapes de l'accompagnement..."></textarea>
                     </div>
                      <div class="form-section">
-                        <h2><i data-lucide="plane-takeoff"></i>8. Pendant la mobilité – Cadre sécurisant</h2>
+                        <h2><i data-lucide="plane-takeoff"></i>7. Pendant la mobilité – Cadre sécurisant</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
                             <div class="checkbox-group"><input type="checkbox" id="pdt-referent" class="checkbox"><label for="pdt-referent">Référent local identifié (tuteur)</label></div>
                             <div class="checkbox-group"><input type="checkbox" id="pdt-hebergement" class="checkbox"><label for="pdt-hebergement">Hébergement sécurisé et validé</label></div>
@@ -243,7 +238,7 @@
                         </div>
                     </div>
                     <div class="form-section">
-                        <h2><i data-lucide="trophy"></i>9. Après la mobilité – Valorisation</h2>
+                        <h2><i data-lucide="trophy"></i>8. Après la mobilité – Valorisation</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
                              <div class="checkbox-group"><input type="checkbox" id="apr-entretien" class="checkbox"><label for="apr-entretien">Entretien retour structuré</label></div>
                              <div class="checkbox-group"><input type="checkbox" id="apr-valorisation" class="checkbox"><label for="apr-valorisation">Valorisation des acquis (Europass, CV...)</label></div>
@@ -254,8 +249,10 @@
                         </div>
                     </div>
                     <div class="form-section">
-                        <h2><i data-lucide="clipboard-check"></i>10. Synthèse et validation du plan partagé</h2>
-                        <div><label for="summary-analysis" class="label">Résumé de l’analyse :</label><textarea id="summary-analysis" class="textarea" rows="6" placeholder="Rédigez ici la synthèse du diagnostic..."></textarea></div>
+                        <h2><i data-lucide="clipboard-check"></i>9. Synthèse et validation du plan partagé</h2>
+                        <label for="summary-analysis" class="label">Résumé de l’analyse :</label>
+                        <textarea id="summary-analysis" class="textarea" rows="6" placeholder="Synthétiser les points forts, les freins et les besoins..."></textarea>
+                        
                         <div class="mt-4"><label for="summary-plan">Plan d’action validé et engagements réciproques :</label><textarea id="summary-plan" class="textarea" rows="4"></textarea></div>
                         <div class="mt-4"><label for="summary-timeline">Rétroplanning / échéances clés :</label><textarea id="summary-timeline" class="textarea" rows="4"></textarea></div>
                     </div>
@@ -263,6 +260,7 @@
             </main>
         </div>
     </div>
+
     <!-- Custom Modal for Messages/Errors -->
     <div id="message-modal" class="fixed inset-0 z-[70] flex items-center justify-center bg-gray-900 bg-opacity-60 hidden no-print p-4">
         <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full transform transition-all scale-95 opacity-0" id="message-modal-content">
@@ -273,10 +271,12 @@
             <p id="message-modal-text" class="text-gray-700">Message content here.</p>
         </div>
     </div>
+
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
-
+            
             // --- UI Elements ---
             const startScreen = document.getElementById('start-screen');
             const startBtn = document.getElementById('start-diag-btn');
@@ -286,37 +286,21 @@
             const youthNameField = document.getElementById('youth-name');
             const youthList = document.getElementById('youth-list');
             const analysisGridBody = document.getElementById('analysis-grid-body');
-            const languageSkillsContainer = document.getElementById('language-skills-container');
             const messageModal = document.getElementById('message-modal');
             const messageModalContent = document.getElementById('message-modal-content');
             const messageModalTitle = document.getElementById('message-modal-title');
             const messageModalText = document.getElementById('message-modal-text');
             const closeMessageModalBtn = document.getElementById('close-message-modal-btn');
-
+            
             // --- State and DB ---
-            const DB_NAME = 'mobilityDiagnosticsDB_v7_no_ai';
+            const DB_NAME = 'mobilityDiagnosticsDB_v4';
             let currentYouthId = null;
 
-            // --- Data Structures ---
-            const languages = [
-                { key: 'en', name: 'Anglais' },
-                { key: 'es', name: 'Espagnol' },
-                { key: 'it', name: 'Italien' },
-                { key: 'de', name: 'Allemand' },
-                { key: 'eu', name: 'Basque' },
-                { key: 'other', name: 'Autre langue', custom: true }
-            ];
-
-            const languageLevels = [
-                { key: 'none', label: 'Aucune connaissance' },
-                { key: 'a1a2', label: 'Débutant (A1/A2)' },
-                { key: 'b1b2', label: 'Intermédiaire (B1/B2)' },
-                { key: 'c1c2', label: 'Avancé (C1/C2)' }
-            ];
-
+            // --- Data Structure ---
             const analysisDomains = [
                 { id: 'admin', emoji: '🗂️', title: 'Autonomie administrative', questions: [ { id: 'q1', text: 'Le jeune sait-il gérer ses démarches administratives seul ?', answers: ['Oui', 'En partie', 'Non, a besoin d\'un soutien constant'] }, { id: 'q2', text: 'Dispose-t-il de ses papiers (passeport, etc.) ?', answers: ['Oui, tout est à jour', 'En cours', 'Non, aucune démarche entamée'] }, { id: 'q3', text: 'A-t-il déjà l’expérience de démarches longues ?', answers: ['Oui, plusieurs fois', 'Une ou deux fois', 'Jamais'] } ]},
                 { id: 'estime', emoji: '🫶', title: 'Estime de soi / Bien-être / Confiance', questions: [ { id: 'q1', text: 'Le jeune semble-t-il confiant dans sa capacité à partir ?', answers: ['Oui, très confiant', 'Assez confiant, avec quelques doutes', 'Peu confiant, beaucoup d\'appréhension'] }, { id: 'q2', text: 'A-t-il exprimé des doutes, de l’anxiété, des peurs ?', answers: ['Non, pas de peurs exprimées', 'Oui, quelques-unes (solitude, etc.)', 'Oui, des peurs importantes'] }, { id: 'q3', text: 'Présente-t-il des fragilités particulières ?', answers: ['Non, pas à ma connaissance', 'Oui, légères (stress)', 'Oui, importantes à prendre en compte'] } ]},
+                { id: 'langues', emoji: '🗣️', title: 'Compétences linguistiques', type: 'language_grid' },
                 { id: 'interculturel', emoji: '🌍', title: 'Appétence interculturelle / Adaptabilité', questions: [ { id: 'q1', text: 'A-t-il déjà vécu des expériences hors de son environnement ?', answers: ['Oui, plusieurs expériences significatives', 'Oui, quelques voyages ou rencontres', 'Non, jamais'] }, { id: 'q2', text: 'Comment réagit-il à l’idée de vivre dans un environnement différent ?', answers: ['Très enthousiaste et curieux', 'Un mélange de curiosité et d\'inquiétude', 'Plutôt inquiet et réticent'] } ]},
                 { id: 'orga', emoji: '📅', title: 'Compétences organisationnelles et logistiques', questions: [ { id: 'q1', text: 'Le jeune sait-il organiser un projet ?', answers: ['Oui, de manière autonome', 'En partie, avec un cadre', 'Non, a besoin d\'être guidé'] }, { id: 'q2', text: 'A-t-il déjà mené des démarches complexes seul ?', answers: ['Oui', 'Rarement', 'Non'] } ]},
                 { id: 'finances', emoji: '💰', title: 'Ressources financières', questions: [ { id: 'q1', text: 'Ses ressources sont-elles suffisantes ?', answers: ['Oui, budget sécurisé', 'Partiellement, des aides sont nécessaires', 'Non, situation financière très précaire'] }, { id: 'q2', text: 'Est-il informé des aides possibles ?', answers: ['Oui, bien informé', 'Partiellement', 'Pas du tout'] } ]},
@@ -330,60 +314,57 @@
                 messageModalTitle.className = isError ? 'text-lg font-bold text-red-700' : 'text-lg font-bold text-blue-700';
                 messageModal.classList.remove('hidden');
                 messageModal.classList.add('flex');
-                setTimeout(() => { messageModalContent.classList.remove('scale-95', 'opacity-0'); }, 10);
+                setTimeout(() => {
+                    messageModalContent.classList.remove('scale-95', 'opacity-0');
+                }, 10);
             };
 
             const hideMessage = () => {
                 messageModalContent.classList.add('scale-95', 'opacity-0');
-                setTimeout(() => { messageModal.classList.add('hidden'); messageModal.classList.remove('flex'); }, 200);
+                setTimeout(() => {
+                    messageModal.classList.add('hidden');
+                    messageModal.classList.remove('flex');
+                }, 200);
             };
 
             // --- Form and Data Functions ---
-            function generateLanguageAssessments() {
-                languageSkillsContainer.innerHTML = '';
-                languages.forEach(lang => {
-                    if (lang.custom) {
-                        const langEl = document.createElement('div');
-                        langEl.className = 'language-assessment';
-                        langEl.innerHTML = `
-                            <p class="language-name">${lang.name}</p>
-                            <div class="flex items-center gap-2 mb-2">
-                                <input type="text" placeholder="Compléter la langue" class="input" style="width: 150px;" id="other-language-name">
-                            </div>
-                            <div class="levels">
-                                ${languageLevels.map(level => `
-                                    <div class="radio-group">
-                                        <input type="radio" name="lang-other" id="lang-other-${level.key}" value="${level.key}" class="radio">
-                                        <label for="lang-other-${level.key}" class="font-normal">${level.label}</label>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        `;
-                        languageSkillsContainer.appendChild(langEl);
-                    } else {
-                        const levelsHTML = languageLevels.map(level => `
-                            <div class="radio-group">
-                                <input type="radio" name="lang-${lang.key}" id="lang-${lang.key}-${level.key}" value="${level.key}" class="radio">
-                                <label for="lang-${lang.key}-${level.key}" class="font-normal">${level.label}</label>
-                            </div>
-                        `).join('');
-                        const langEl = document.createElement('div');
-                        langEl.className = 'language-assessment';
-                        langEl.innerHTML = `
-                            <p class="language-name">${lang.name}</p>
-                            <div class="levels">${levelsHTML}</div>
-                        `;
-                        languageSkillsContainer.appendChild(langEl);
-                    }
-                });
-            }
-
             function generateAnalysisGrid() {
                 analysisGridBody.innerHTML = '';
                 analysisDomains.forEach(domain => {
                     const domainEl = document.createElement('div');
                     domainEl.className = 'analysis-domain';
-                    const questionsHTML = domain.questions.map(q => `
+                    let contentHTML = `<h3>${domain.emoji} ${domain.title}</h3>`;
+
+                    if (domain.type === 'language_grid') {
+                        const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+                        contentHTML += `
+                        <div class="overflow-x-auto -mx-4">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="p-2 font-semibold">Niveau</th>
+                                        <th class="p-2 font-semibold text-center">Anglais</th>
+                                        <th class="p-2 font-semibold text-center">Espagnol</th>
+                                        <th class="p-2 font-semibold text-center">Euskara</th>
+                                        <th class="p-2 font-semibold text-center"><input type="text" id="langue-autre-1-name" placeholder="Autre langue..." class="input !p-1 !text-sm text-center"></th>
+                                        <th class="p-2 font-semibold text-center"><input type="text" id="langue-autre-2-name" placeholder="Autre langue..." class="input !p-1 !text-sm text-center"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${levels.map(level => `
+                                    <tr class="border-b">
+                                        <td class="p-2 font-semibold">${level}</td>
+                                        <td class="p-2 text-center"><input type="radio" name="langue-anglais" value="${level}" class="radio"></td>
+                                        <td class="p-2 text-center"><input type="radio" name="langue-espagnol" value="${level}" class="radio"></td>
+                                        <td class="p-2 text-center"><input type="radio" name="langue-euskara" value="${level}" class="radio"></td>
+                                        <td class="p-2 text-center"><input type="radio" name="langue-autre-1" value="${level}" class="radio"></td>
+                                        <td class="p-2 text-center"><input type="radio" name="langue-autre-2" value="${level}" class="radio"></td>
+                                    </tr>`).join('')}
+                                </tbody>
+                            </table>
+                        </div>`;
+                    } else {
+                        contentHTML += domain.questions.map(q => `
                         <div class="mb-4">
                             <p class="analysis-question">${q.text}</p>
                             <div class="analysis-responses">${q.answers.map((ans, aIndex) => `
@@ -393,14 +374,16 @@
                                 </div>`).join('')}
                             </div>
                         </div>`).join('');
-                    domainEl.innerHTML = `
-                        <h3>${domain.emoji} ${domain.title}</h3>
-                        ${questionsHTML}
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                            <div><label for="obs-${domain.id}" class="text-sm">→ Observations :</label><textarea id="obs-${domain.id}" data-field="observations" data-domain="${domain.id}" class="textarea" rows="3"></textarea></div>
-                            <div><label for="freins-${domain.id}" class="text-sm">→ Freins éventuels :</label><textarea id="freins-${domain.id}" data-field="freins" data-domain="${domain.id}" class="textarea" rows="3"></textarea></div>
-                            <div><label for="besoins-${domain.id}" class="text-sm">→ Besoins identifiés :</label><textarea id="besoins-${domain.id}" data-field="besoins" data-domain="${domain.id}" class="textarea" rows="3"></textarea></div>
-                        </div>`;
+                    }
+                    
+                    contentHTML += `
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                        <div><label for="obs-${domain.id}" class="text-sm">→ Observations :</label><textarea id="obs-${domain.id}" data-field="observations" data-domain="${domain.id}" class="textarea" rows="3"></textarea></div>
+                        <div><label for="freins-${domain.id}" class="text-sm">→ Freins éventuels :</label><textarea id="freins-${domain.id}" data-field="freins" data-domain="${domain.id}" class="textarea" rows="3"></textarea></div>
+                        <div><label for="besoins-${domain.id}" class="text-sm">→ Besoins identifiés :</label><textarea id="besoins-${domain.id}" data-field="besoins" data-domain="${domain.id}" class="textarea" rows="3"></textarea></div>
+                    </div>`;
+
+                    domainEl.innerHTML = contentHTML;
                     analysisGridBody.appendChild(domainEl);
                 });
             }
@@ -408,33 +391,31 @@
             function getFormData() {
                 const analysisGridData = {};
                 analysisDomains.forEach(domain => {
-                    const questionData = {};
-                    domain.questions.forEach(q => {
-                        const checkedRadio = document.querySelector(`input[name="${domain.id}-${q.id}"]:checked`);
-                        questionData[q.id] = checkedRadio ? checkedRadio.value : null;
-                    });
+                    let domainContent;
+                    if (domain.type === 'language_grid') {
+                        domainContent = {
+                            anglais: document.querySelector('input[name="langue-anglais"]:checked')?.value || null,
+                            espagnol: document.querySelector('input[name="langue-espagnol"]:checked')?.value || null,
+                            euskara: document.querySelector('input[name="langue-euskara"]:checked')?.value || null,
+                            autre1: { name: document.getElementById('langue-autre-1-name').value, level: document.querySelector('input[name="langue-autre-1"]:checked')?.value || null },
+                            autre2: { name: document.getElementById('langue-autre-2-name').value, level: document.querySelector('input[name="langue-autre-2"]:checked')?.value || null }
+                        };
+                    } else {
+                        const questionData = {};
+                        domain.questions.forEach(q => {
+                            const checkedRadio = document.querySelector(`input[name="${domain.id}-${q.id}"]:checked`);
+                            questionData[q.id] = checkedRadio ? checkedRadio.value : null;
+                        });
+                        domainContent = { questions: questionData };
+                    }
+                    
                     analysisGridData[domain.id] = {
-                        questions: questionData,
+                        ...domainContent,
                         observations: document.querySelector(`textarea[data-domain='${domain.id}'][data-field='observations']`).value,
                         freins: document.querySelector(`textarea[data-domain='${domain.id}'][data-field='freins']`).value,
                         besoins: document.querySelector(`textarea[data-domain='${domain.id}'][data-field='besoins']`).value,
                     };
                 });
-
-                const languageData = {};
-                languages.forEach(lang => {
-                    if (lang.custom) {
-                        const otherLanguageName = document.getElementById('other-language-name').value;
-                        if (otherLanguageName) {
-                            const checkedRadio = document.querySelector(`input[name="lang-other"]:checked`);
-                            languageData['other'] = { name: otherLanguageName, level: checkedRadio ? checkedRadio.value : null };
-                        }
-                    } else {
-                        const checkedRadio = document.querySelector(`input[name="lang-${lang.key}"]:checked`);
-                        languageData[lang.key] = checkedRadio ? checkedRadio.value : null;
-                    }
-                });
-
                 return {
                     id: currentYouthId || crypto.randomUUID(),
                     name: youthNameField.value,
@@ -442,11 +423,7 @@
                     advisorName: document.getElementById('advisor-name').value,
                     advisorTerritory: document.getElementById('advisor-territory').value,
                     profil: { autonome: document.getElementById('profil-autonome').checked, motive: document.getElementById('profil-motive').checked, fragile: document.getElementById('profil-fragile').checked },
-                    projectType: document.getElementById('project-type').value,
-                    projectDuration: document.getElementById('project-duration').value,
-                    projectGeo: document.getElementById('project-geo').value,
-                    projectSuggestions: document.getElementById('project-suggestions').value,
-                    languages: languageData,
+                    projection: { type: document.getElementById('mobility-type').value, duration: document.getElementById('mobility-duration').value, destination: document.getElementById('mobility-destination').value },
                     analysisGrid: analysisGridData,
                     parcoursType: document.querySelector('input[name="parcours-type"]:checked')?.id || '',
                     sequences: document.getElementById('sequences').value,
@@ -471,27 +448,24 @@
                     document.getElementById('profil-motive').checked = data.profil.motive || false;
                     document.getElementById('profil-fragile').checked = data.profil.fragile || false;
                 }
-                document.getElementById('project-type').value = data.projectType || '';
-                document.getElementById('project-duration').value = data.projectDuration || '';
-                document.getElementById('project-geo').value = data.projectGeo || '';
-                document.getElementById('project-suggestions').value = data.projectSuggestions || '';
-                if (data.languages) {
-                    for (const [langKey, langValue] of Object.entries(data.languages)) {
-                        if (langKey === 'other' && langValue.name) {
-                            document.getElementById('other-language-name').value = langValue.name;
-                            const radioToCheck = document.getElementById(`lang-other-${langValue.level}`);
-                            if (radioToCheck) radioToCheck.checked = true;
-                        } else if (langValue) {
-                            const radioToCheck = document.getElementById(`lang-${langKey}-${langValue}`);
-                            if (radioToCheck) radioToCheck.checked = true;
-                        }
-                    }
+                if(data.projection){
+                    document.getElementById('mobility-type').value = data.projection.type || '';
+                    document.getElementById('mobility-duration').value = data.projection.duration || '';
+                    document.getElementById('mobility-destination').value = data.projection.destination || '';
                 }
                 if (data.analysisGrid) {
                     analysisDomains.forEach(domain => {
                         const domainData = data.analysisGrid[domain.id];
                         if (domainData) {
-                            if (domainData.questions) { for (const [qId, qValue] of Object.entries(domainData.questions)) { if (qValue !== null) { const radioToCheck = document.querySelector(`input[name="${domain.id}-${qId}"][value="${qValue}"]`); if (radioToCheck) radioToCheck.checked = true; } } }
+                            if (domain.type === 'language_grid') {
+                                if (domainData.anglais) { const radio = document.querySelector(`input[name="langue-anglais"][value="${domainData.anglais}"]`); if (radio) radio.checked = true; }
+                                if (domainData.espagnol) { const radio = document.querySelector(`input[name="langue-espagnol"][value="${domainData.espagnol}"]`); if (radio) radio.checked = true; }
+                                if (domainData.euskara) { const radio = document.querySelector(`input[name="langue-euskara"][value="${domainData.euskara}"]`); if (radio) radio.checked = true; }
+                                if (domainData.autre1) { document.getElementById('langue-autre-1-name').value = domainData.autre1.name || ''; if (domainData.autre1.level) { const radio = document.querySelector(`input[name="langue-autre-1"][value="${domainData.autre1.level}"]`); if (radio) radio.checked = true; } }
+                                if (domainData.autre2) { document.getElementById('langue-autre-2-name').value = domainData.autre2.name || ''; if (domainData.autre2.level) { const radio = document.querySelector(`input[name="langue-autre-2"][value="${domainData.autre2.level}"]`); if (radio) radio.checked = true; } }
+                            } else if (domainData.questions) {
+                                for (const [qId, qValue] of Object.entries(domainData.questions)) { if (qValue !== null) { const radioToCheck = document.querySelector(`input[name="${domain.id}-${qId}"][value="${qValue}"]`); if (radioToCheck) radioToCheck.checked = true; } }
+                            }
                             document.querySelector(`textarea[data-domain='${domain.id}'][data-field='observations']`).value = domainData.observations || '';
                             document.querySelector(`textarea[data-domain='${domain.id}'][data-field='freins']`).value = domainData.freins || '';
                             document.querySelector(`textarea[data-domain='${domain.id}'][data-field='besoins']`).value = domainData.besoins || '';
@@ -506,7 +480,7 @@
                 document.getElementById('summary-plan').value = data.summaryPlan || '';
                 document.getElementById('summary-timeline').value = data.summaryTimeline || '';
             }
-
+            
             function clearForm() {
                 form.reset();
                 youthIdField.value = '';
@@ -540,7 +514,7 @@
                 }
             }
 
-            function deleteYouthData(id, name) {
+            function deleteYouthData(id) {
                 const db = JSON.parse(localStorage.getItem(DB_NAME)) || {};
                 delete db[id];
                 localStorage.setItem(DB_NAME, JSON.stringify(db));
@@ -575,33 +549,26 @@
 
             // --- Event Listeners ---
             startBtn.addEventListener('click', () => {
-                startScreen.style.opacity = '0';
-                startScreen.style.visibility = 'hidden';
+                startScreen.classList.add('hidden');
                 mainContent.classList.remove('hidden');
-                setTimeout(() => {
-                    startScreen.style.display = 'none';
-                }, 300);
             });
-
             document.getElementById('save-btn').addEventListener('click', saveYouthData);
             document.getElementById('new-youth-btn').addEventListener('click', clearForm);
             document.getElementById('print-btn').addEventListener('click', () => window.print());
             closeMessageModalBtn.addEventListener('click', hideMessage);
-
             youthList.addEventListener('click', (e) => {
                 const deleteBtn = e.target.closest('.delete-btn');
                 if (deleteBtn) {
                     e.stopPropagation();
                     showMessage("Confirmation", `Supprimer le diagnostic de "${deleteBtn.dataset.deleteName}" ?<br><br><button id="confirm-delete" class="btn btn-danger">Confirmer</button>`, false);
                     document.getElementById('confirm-delete').onclick = () => {
-                        deleteYouthData(deleteBtn.dataset.deleteId, deleteBtn.dataset.deleteName);
+                        deleteYouthData(deleteBtn.dataset.deleteId);
                         hideMessage();
                     };
                 }
             });
 
             // --- Initial Load ---
-            generateLanguageAssessments();
             generateAnalysisGrid();
             renderYouthList();
             document.getElementById('diag-date').valueAsDate = new Date();
@@ -609,3 +576,4 @@
     </script>
 </body>
 </html>
+
