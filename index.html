@@ -1,579 +1,626 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Outil de Diagnostic Mobilité Internationale v4</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f1f5f9;
-        }
-        .form-section {
-            background-color: white;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
-        }
-        .form-section h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #1e3a8a;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            border-bottom: 2px solid #dbeafe;
-            padding-bottom: 0.5rem;
-        }
-         .form-section h2 svg {
-            margin-right: 0.75rem;
-            color: #3b82f6;
-        }
-        label, .label {
-            display: block;
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 0.5rem;
-        }
-        .input, .textarea, .select {
-            width: 100%;
-            padding: 0.5rem 0.75rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.375rem;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            background-color: #f9fafb;
-        }
-        .input:focus, .textarea:focus, .select:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 2px #bfdbfe;
-            background-color: white;
-        }
-        .checkbox-group, .radio-group {
-            display: flex;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-        .checkbox, .radio {
-            margin-right: 0.5rem;
-            height: 1.25rem;
-            width: 1.25rem;
-            border-radius: 0.25rem;
-            border-color: #9ca3af;
-            flex-shrink: 0;
-        }
-        .radio { border-radius: 50%; }
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.625rem 1.25rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            border: none;
-        }
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        .btn-primary { background-color: #2563eb; color: white; }
-        .btn-primary:hover:not(:disabled) { background-color: #1d4ed8; }
-        .btn-secondary { background-color: #e5e7eb; color: #374151; }
-        .btn-secondary:hover:not(:disabled) { background-color: #d1d5db; }
-        .btn-danger { background-color: #dc2626; color: white; }
-        .btn-danger:hover:not(:disabled) { background-color: #b91c1c; }
-
-        #youth-list li {
-            padding: 0.75rem;
-            border-bottom: 1px solid #e5e7eb;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        #youth-list li:hover, #youth-list li.active { background-color: #eff6ff; }
-        #youth-list li:last-child { border-bottom: none; }
-        
-        .profile-card { border: 2px solid #e5e7eb; border-radius: 0.5rem; padding: 1rem; transition: border-color 0.2s; }
-        
-        .analysis-domain {
-            padding: 1.5rem;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-        .analysis-domain h3 { font-size: 1.1rem; font-weight: 700; color: #1e3a8a; margin-bottom: 1rem; }
-        .analysis-question { font-size: 0.9rem; color: #4b5563; margin-bottom: 0.75rem; font-weight: 500; }
-        .analysis-responses { display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 1rem; }
-        .hidden { display: none; }
-        
-        @media print {
-            body { background-color: white; }
-            .no-print { display: none; }
-            .form-section { box-shadow: none; border: 1px solid #e5e7eb; margin-bottom: 1rem; }
-            .container { max-width: 100%; padding: 0; }
-            .textarea, .input, .select { border: none; background-color: #f9fafb; }
-        }
-    </style>
-</head>
-<body class="bg-slate-100">
-
-    <!-- Splash Screen -->
-    <div id="start-screen" class="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-slate-100 p-4">
-        <img src="https://images.pexels.com/photos/2387793/pexels-photo-2387793.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Jeunes regardant une carte du monde" class="w-64 h-64 object-cover rounded-full mb-8 shadow-lg">
-        <h1 class="text-4xl font-bold text-gray-800 text-center mb-4">Diag Mobilité internationale</h1>
-        <p class="text-gray-600 mb-8 text-center">Outil d'analyse et de définition du parcours de préparation au départ.</p>
-        <button id="start-diag-btn" class="btn btn-primary text-lg px-8 py-3">Commencer</button>
-    </div>
-
-    <!-- Main Content -->
-    <div id="main-content" class="container mx-auto p-4 md:p-8 hidden">
-        <header class="no-print mb-8 flex flex-col md:flex-row justify-between items-center">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-800">Diagnostic Mobilité Internationale</h1>
-                <p class="text-gray-500">Outil d'analyse et de définition du parcours de préparation au départ.</p>
-            </div>
-            <div class="flex items-center space-x-2 mt-4 md:mt-0">
-                <button id="print-btn" class="btn btn-secondary"><i data-lucide="printer" class="w-4 h-4 mr-2"></i>Imprimer / PDF</button>
-                <button id="save-btn" class="btn btn-primary"><i data-lucide="save" class="w-4 h-4 mr-2"></i>Sauvegarder</button>
-            </div>
-        </header>
-
-        <div class="flex flex-col md:flex-row gap-8">
-            <!-- Left Column: Youth List -->
-            <aside class="md:w-1/3 lg:w-1/4 no-print">
-                <div class="form-section p-4 sticky top-8">
-                    <h2 class="text-lg !text-gray-700"><i data-lucide="users" class="w-5 h-5 !text-gray-500"></i>Mes suivis</h2>
-                    <button id="new-youth-btn" class="btn btn-primary w-full mb-4"><i data-lucide="plus-circle" class="w-4 h-4 mr-2"></i>Nouveau diagnostic</button>
-                    <ul id="youth-list" class="bg-gray-50 rounded-md max-h-96 overflow-y-auto">
-                        <!-- Youth list will be injected here -->
-                    </ul>
-                </div>
-            </aside>
-
-            <!-- Right Column: Analysis Form -->
-            <main class="md:w-2/3 lg:w-3/4">
-                <form id="analysis-form" onsubmit="return false;">
-                    <input type="hidden" id="youth-id">
-                    
-                    <div class="form-section">
-                        <h2><i data-lucide="user-circle"></i>1. Identification de la situation</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div><label for="youth-name">Nom du jeune :</label><input type="text" id="youth-name" class="input" required></div>
-                            <div><label for="diag-date">Date du diagnostic :</label><input type="date" id="diag-date" class="input"></div>
-                            <div><label for="advisor-name">Nom du conseiller :</label><input type="text" id="advisor-name" class="input"></div>
-                            <div><label for="advisor-territory">Territoire / Antenne :</label><input type="text" id="advisor-territory" class="input"></div>
-                        </div>
-                    </div>
-                    <div class="form-section">
-                        <h2><i data-lucide="users-round"></i>2. Qualification du profil mobilité</h2>
-                        <div class="space-y-4">
-                            <div class="profile-card"><div class="checkbox-group"><input type="checkbox" id="profil-autonome" class="checkbox"><label for="profil-autonome" class="font-bold text-green-700">🟩 Jeune autonome et déjà informé</label></div><p class="ml-7 text-sm">Projet clair, connaît les dispositifs, autonome sur les démarches, besoins limités au suivi et à la sécurisation.</p></div>
-                            <div class="profile-card"><div class="checkbox-group"><input type="checkbox" id="profil-motive" class="checkbox"><label for="profil-motive" class="font-bold text-orange-700">🟧 Jeune motivé mais peu informé</label></div><p class="ml-7 text-sm">Curieux, a besoin d’explorer, de comprendre les dispositifs et de lever des freins (administratif, budget, langue, réseau).</p></div>
-                            <div class="profile-card"><div class="checkbox-group"><input type="checkbox" id="profil-fragile" class="checkbox"><label for="profil-fragile" class="font-bold text-red-700">🟥 Jeune fragile / freins multiples</label></div><p class="ml-7 text-sm">Confiance en soi faible, freins personnels, sociaux, administratifs, linguistiques… nécessite un accompagnement renforcé et progressif.</p></div>
-                        </div>
-                    </div>
-                     <div class="form-section">
-                        <h2><i data-lucide="map"></i>3. Niveau de projection dans le projet</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div>
-                                <label for="mobility-type">Type de mobilité :</label>
-                                <select id="mobility-type" class="select">
-                                    <option value="">Sélectionner...</option>
-                                    <option value="stage">Stage</option>
-                                    <option value="volontariat">Volontariat</option>
-                                    <option value="echange">Échange de jeune</option>
-                                    <option value="emploi">Emploi</option>
-                                </select>
-                            </div>
-                             <div>
-                                <label for="mobility-duration">Durée envisagée :</label>
-                                <select id="mobility-duration" class="select">
-                                    <option value="">Sélectionner...</option>
-                                    <option value="1w-1m">De une semaine à un mois</option>
-                                    <option value="1m-3m">Jusqu’à trois mois</option>
-                                    <option value="3m-12m">Jusqu’à 12 mois</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="mobility-destination">Idée de destination :</label>
-                                <input type="text" id="mobility-destination" class="input" placeholder="Ex: Espagne, Canada...">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-section">
-                        <h2><i data-lucide="list-checks"></i>4. Grille d’analyse – Observation, freins, leviers et besoins</h2>
-                        <div id="analysis-grid-body"></div>
-                    </div>
-                    <div class="form-section">
-                        <h2><i data-lucide="user-check"></i>5. Diagnostic professionnel – Type de parcours</h2>
-                        <label class="label">Niveau de sécurisation requis :</label>
-                        <div class="flex space-x-4">
-                            <div class="radio-group"><input type="radio" name="parcours-type" id="type-autonome" class="radio"><label for="type-autonome">🟩 Autonome</label></div>
-                            <div class="radio-group"><input type="radio" name="parcours-type" id="type-progressif" class="radio"><label for="type-progressif">🟧 Progressif</label></div>
-                            <div class="radio-group"><input type="radio" name="parcours-type" id="type-renforce" class="radio"><label for="type-renforce">🟥 Renforcé</label></div>
-                        </div>
-                    </div>
-                    <div class="form-section">
-                        <h2><i data-lucide="goal"></i>6. Construction du plan d’accompagnement</h2>
-                        <label for="sequences" class="label">📅 Séquences et étapes prévues :</label>
-                        <textarea id="sequences" class="textarea" rows="8" placeholder="Décrire les différentes étapes de l'accompagnement..."></textarea>
-                    </div>
-                     <div class="form-section">
-                        <h2><i data-lucide="plane-takeoff"></i>7. Pendant la mobilité – Cadre sécurisant</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
-                            <div class="checkbox-group"><input type="checkbox" id="pdt-referent" class="checkbox"><label for="pdt-referent">Référent local identifié (tuteur)</label></div>
-                            <div class="checkbox-group"><input type="checkbox" id="pdt-hebergement" class="checkbox"><label for="pdt-hebergement">Hébergement sécurisé et validé</label></div>
-                            <div class="checkbox-group"><input type="checkbox" id="pdt-soutien" class="checkbox"><label for="pdt-soutien">Soutien financier assuré</label></div>
-                            <div class="checkbox-group"><input type="checkbox" id="pdt-suivi" class="checkbox"><label for="pdt-suivi">Suivi régulier (visios, appels...)</label></div>
-                            <div class="checkbox-group"><input type="checkbox" id="pdt-plan" class="checkbox"><label for="pdt-plan">Plan d’intervention en cas de difficulté</label></div>
-                            <div class="checkbox-group"><input type="checkbox" id="pdt-objectifs" class="checkbox"><label for="pdt-objectifs">Vérification des objectifs de compétences</label></div>
-                        </div>
-                    </div>
-                    <div class="form-section">
-                        <h2><i data-lucide="trophy"></i>8. Après la mobilité – Valorisation</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
-                             <div class="checkbox-group"><input type="checkbox" id="apr-entretien" class="checkbox"><label for="apr-entretien">Entretien retour structuré</label></div>
-                             <div class="checkbox-group"><input type="checkbox" id="apr-valorisation" class="checkbox"><label for="apr-valorisation">Valorisation des acquis (Europass, CV...)</label></div>
-                             <div class="checkbox-group"><input type="checkbox" id="apr-miseajour" class="checkbox"><label for="apr-miseajour">Mise à jour du PACEA ou CEJ</label></div>
-                             <div class="checkbox-group"><input type="checkbox" id="apr-integration" class="checkbox"><label for="apr-integration">Intégration des compétences au projet pro</label></div>
-                             <div class="checkbox-group"><input type="checkbox" id="apr-partage" class="checkbox"><label for="apr-partage">Partage d’expérience (mentorat, forums)</label></div>
-                             <div class="checkbox-group"><input type="checkbox" id="apr-projection" class="checkbox"><label for="apr-projection">Projection vers une nouvelle étape</label></div>
-                        </div>
-                    </div>
-                    <div class="form-section">
-                        <h2><i data-lucide="clipboard-check"></i>9. Synthèse et validation du plan partagé</h2>
-                        <label for="summary-analysis" class="label">Résumé de l’analyse :</label>
-                        <textarea id="summary-analysis" class="textarea" rows="6" placeholder="Synthétiser les points forts, les freins et les besoins..."></textarea>
-                        
-                        <div class="mt-4"><label for="summary-plan">Plan d’action validé et engagements réciproques :</label><textarea id="summary-plan" class="textarea" rows="4"></textarea></div>
-                        <div class="mt-4"><label for="summary-timeline">Rétroplanning / échéances clés :</label><textarea id="summary-timeline" class="textarea" rows="4"></textarea></div>
-                    </div>
-                </form>
-            </main>
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diagnostic Mobilité Internationale</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Architects+Daughter&family=Patrick+Hand&display=swap');
+    
+    * {
+      font-family: 'Patrick Hand', 'Architects Daughter', cursive, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    
+    .title-font {
+      font-family: 'Caveat', cursive;
+      font-weight: 700;
+    }
+    
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        linear-gradient(135deg, #fefdfb 0%, #fffef9 100%);
+      z-index: -2;
+    }
+    
+    .sketch-bg {
+      background-image: 
+        url("data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.25' stroke='%23555' fill='none' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M50 80 Q60 75 70 80 T90 80 M100 60 L130 90 M135 65 L165 95 M55 150 Q55 130 75 130 Q95 130 95 150 Q95 170 75 170 Q55 170 55 150 M180 140 L210 140 M195 125 L195 155 M240 60 Q245 55 250 60 L270 90 Q275 95 270 100 L250 130 Q245 135 240 130 L220 100 Q215 95 220 90 Z M60 220 L80 250 M70 250 L90 220 M130 230 L150 230 M140 220 L140 240 M180 220 C180 215 185 210 190 210 C195 210 200 215 200 220 L200 240 C200 245 195 250 190 250 C185 250 180 245 180 240 Z M240 230 Q245 225 250 230 T270 230 M300 60 C300 50 310 50 310 60 L310 85 M305 85 L320 70 M50 300 L70 320 L50 340 L30 320 Z M100 310 Q105 305 110 310 L125 330 Q130 335 125 340 L110 360 Q105 365 100 360 L85 340 Q80 335 85 330 Z M160 320 L180 300 M180 320 L160 300 M220 310 C225 305 235 305 240 310 L240 340 C235 345 225 345 220 340 Z M280 320 Q285 315 290 320 T310 320'/%3E%3C/g%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-position: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.7;
+    }
+    
+    .radio-card {
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .radio-card:hover {
+      transform: translateY(-3px) rotate(-0.5deg);
+    }
+    
+    .radio-card input:checked + div {
+      border-width: 3px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+    
+    .section-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 8px;
+      border: 2.5px solid #333;
+      box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .section-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 6px 6px 0px rgba(0,0,0,0.25);
+    }
+    
+    .section-card::before {
+      content: '';
+      position: absolute;
+      top: -3px;
+      left: -3px;
+      right: -3px;
+      bottom: -3px;
+      border: 1px dashed rgba(0,0,0,0.1);
+      border-radius: 10px;
+      pointer-events: none;
+    }
+    
+    textarea, input[type="text"], input[type="date"], select {
+      border: 2px solid #555 !important;
+      border-radius: 4px !important;
+      box-shadow: 2px 2px 0px rgba(0,0,0,0.1) !important;
+      background: rgba(255,255,255,0.9) !important;
+      transition: all 0.2s ease !important;
+    }
+    
+    textarea:focus, input[type="text"]:focus, input[type="date"]:focus, select:focus {
+      transform: translateY(-1px);
+      box-shadow: 3px 3px 0px rgba(0,0,0,0.15) !important;
+      border-color: #333 !important;
+    }
+    
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    
+    .sketch-number {
+      font-family: 'Caveat', cursive;
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+    
+    .language-grid {
+      display: grid;
+      grid-template-columns: auto repeat(5, 1fr);
+      gap: 8px;
+      align-items: center;
+    }
+    
+    @media (max-width: 768px) {
+      .language-grid {
+        grid-template-columns: auto 1fr 1fr 1fr;
+      }
+    }
+    
+    .sketch-button {
+      border: 2.5px solid #333;
+      box-shadow: 3px 3px 0px rgba(0,0,0,0.2);
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    
+    .sketch-button:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0px rgba(0,0,0,0.25);
+    }
+    
+    .sketch-button:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0px rgba(0,0,0,0.2);
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="min-h-full">
+  <div class="sketch-bg"></div>
+  <div class="w-full min-h-full py-8 px-4">
+   <div class="max-w-5xl mx-auto"><!-- Header -->
+    <header class="text-center mb-8">
+     <div class="flex justify-center mb-6"><img src="https://static.wixstatic.com/media/dd5dab_47743b1c86024865ba19e623a3db327f~mv2.avif/v1/fill/w_224,h_60,al_c,q_80,enc_avif,quality_auto/dd5dab_47743b1c86024865ba19e623a3db327f~mv2.avif" alt="Logo MLPB" class="h-16 object-contain" onerror="this.style.display='none'; this.alt='Logo MLPB non disponible';">
+     </div>
+     <h1 id="main-title" class="title-font text-5xl text-gray-800 mb-3" style="text-shadow: 2px 2px 0px rgba(0,0,0,0.1);">Diagnostic Mobilité Internationale</h1>
+     <p id="subtitle" class="text-xl text-gray-700 mb-6">Outil d'analyse et de définition du parcours de préparation au départ</p>
+     <div class="flex flex-wrap justify-center gap-3"><button onclick="window.print()" class="sketch-button bg-white text-gray-800 px-6 py-2.5 rounded hover:bg-gray-50 flex items-center gap-2 font-medium">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+       </svg> Imprimer / PDF </button> <button class="sketch-button bg-white text-gray-800 px-6 py-2.5 rounded hover:bg-gray-50 flex items-center gap-2 font-medium">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+       </svg> Sauvegarder </button> <button class="sketch-button bg-white text-gray-800 px-6 py-2.5 rounded hover:bg-gray-50 flex items-center gap-2 font-medium">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+       </svg> Mes suivis </button> <button class="sketch-button bg-amber-100 text-gray-800 px-6 py-2.5 rounded hover:bg-amber-200 flex items-center gap-2 font-medium">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+       </svg> Nouveau diagnostic </button>
+     </div>
+     <p class="text-gray-600 text-sm mt-4">Aucun suivi.</p>
+    </header>
+    <form id="diagnostic-form"><!-- Section 1: Identification -->
+     <section class="section-card p-6 mb-6">
+      <h2 class="title-font text-3xl text-gray-800 mb-6 flex items-center gap-3"><span class="sketch-number bg-amber-100 text-gray-800 w-10 h-10 rounded-full flex items-center justify-center border-2 border-gray-800">1</span> Identification de la situation</h2>
+      <div class="grid md:grid-cols-2 gap-4">
+       <div><label for="nom-jeune" class="block text-sm font-medium text-gray-700 mb-2">Nom du jeune :</label> <input type="text" id="nom-jeune" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+       </div>
+       <div><label for="date-diagnostic" class="block text-sm font-medium text-gray-700 mb-2">Date du diagnostic :</label> <input type="date" id="date-diagnostic" value="2025-11-26" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+       </div>
+       <div><label for="nom-conseiller" class="block text-sm font-medium text-gray-700 mb-2">Nom du conseiller :</label> <input type="text" id="nom-conseiller" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+       </div>
+       <div><label for="territoire" class="block text-sm font-medium text-gray-700 mb-2">Territoire / Antenne :</label> <input type="text" id="territoire" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+       </div>
+      </div>
+     </section><!-- Section 2: Qualification du profil -->
+     <section class="section-card p-6 mb-6">
+      <h2 class="title-font text-3xl text-gray-800 mb-6 flex items-center gap-3"><span class="sketch-number bg-amber-100 text-gray-800 w-10 h-10 rounded-full flex items-center justify-center border-2 border-gray-800">2</span> Qualification du profil mobilité</h2>
+      <div class="space-y-4"><label class="radio-card block cursor-pointer"> <input type="radio" name="profil" value="autonome" class="sr-only">
+        <div class="p-5 border-2 border-green-200 bg-green-50 rounded-xl flex items-start gap-4"><span class="text-3xl">🟩</span>
+         <div class="flex-1">
+          <div class="font-semibold text-gray-800 mb-1">
+           Jeune autonome et déjà informé
+          </div>
+          <div class="text-sm text-gray-600">
+           Projet clair, connaît les dispositifs, autonome sur les démarches, besoins limités au suivi et à la sécurisation.
+          </div>
+         </div>
+        </div></label> <label class="radio-card block cursor-pointer"> <input type="radio" name="profil" value="motive" class="sr-only">
+        <div class="p-5 border-2 border-orange-200 bg-orange-50 rounded-xl flex items-start gap-4"><span class="text-3xl">🟧</span>
+         <div class="flex-1">
+          <div class="font-semibold text-gray-800 mb-1">
+           Jeune motivé mais peu informé
+          </div>
+          <div class="text-sm text-gray-600">
+           Curieux, a besoin d'explorer, de comprendre les dispositifs et de lever des freins (administratif, budget, langue, réseau).
+          </div>
+         </div>
+        </div></label> <label class="radio-card block cursor-pointer"> <input type="radio" name="profil" value="fragile" class="sr-only">
+        <div class="p-5 border-2 border-red-200 bg-red-50 rounded-xl flex items-start gap-4"><span class="text-3xl">🟥</span>
+         <div class="flex-1">
+          <div class="font-semibold text-gray-800 mb-1">
+           Jeune fragile / freins multiples
+          </div>
+          <div class="text-sm text-gray-600">
+           Confiance en soi faible, freins personnels, sociaux, administratifs, linguistiques… nécessite un accompagnement renforcé et progressif.
+          </div>
+         </div>
+        </div></label>
+      </div>
+     </section><!-- Section 3: Niveau de projection -->
+     <section class="section-card p-6 mb-6">
+      <h2 class="title-font text-3xl text-gray-800 mb-6 flex items-center gap-3"><span class="sketch-number bg-amber-100 text-gray-800 w-10 h-10 rounded-full flex items-center justify-center border-2 border-gray-800">3</span> Niveau de projection dans le projet</h2>
+      <div class="grid md:grid-cols-3 gap-4">
+       <div><label for="type-mobilite" class="block text-sm font-medium text-gray-700 mb-2">Type de mobilité :</label> <select id="type-mobilite" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"> <option>Sélectionner...</option> </select>
+       </div>
+       <div><label for="duree" class="block text-sm font-medium text-gray-700 mb-2">Durée envisagée :</label> <select id="duree" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"> <option>Sélectionner...</option> </select>
+       </div>
+       <div><label for="destination" class="block text-sm font-medium text-gray-700 mb-2">Idée de destination :</label> <input type="text" id="destination" placeholder="Ex: Espagne, Canada..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+       </div>
+      </div>
+     </section><!-- Section 4: Grille d'analyse -->
+     <section class="section-card p-6 mb-6">
+      <h2 class="title-font text-3xl text-gray-800 mb-6 flex items-center gap-3"><span class="sketch-number bg-amber-100 text-gray-800 w-10 h-10 rounded-full flex items-center justify-center border-2 border-gray-800">4</span> Grille d'analyse – Observation, freins, leviers et besoins</h2><!-- Autonomie administrative -->
+      <div class="mb-8 p-5 bg-gray-50 rounded-xl">
+       <h3 class="title-font text-2xl text-gray-800 mb-4 flex items-center gap-2"><span>🗂️</span> Autonomie administrative</h3>
+       <div class="space-y-5">
+        <div>
+         <p class="text-sm font-medium text-gray-700 mb-3">Le jeune sait-il gérer ses démarches administratives seul ?</p>
+         <div class="flex flex-wrap gap-3"><label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="admin-autonomie" value="oui" class="w-4 h-4 text-purple-600"> <span class="text-sm">Oui</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="admin-autonomie" value="partie" class="w-4 h-4 text-purple-600"> <span class="text-sm">En partie</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="admin-autonomie" value="non" class="w-4 h-4 text-purple-600"> <span class="text-sm">Non, a besoin d'un soutien constant</span> </label>
+         </div>
         </div>
-    </div>
-
-    <!-- Custom Modal for Messages/Errors -->
-    <div id="message-modal" class="fixed inset-0 z-[70] flex items-center justify-center bg-gray-900 bg-opacity-60 hidden no-print p-4">
-        <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full transform transition-all scale-95 opacity-0" id="message-modal-content">
-            <div class="flex items-center justify-between mb-4">
-                <h3 id="message-modal-title" class="text-lg font-bold">Message</h3>
-                <button id="close-message-modal-btn" class="text-gray-500 hover:text-gray-800 text-2xl leading-none">&times;</button>
-            </div>
-            <p id="message-modal-text" class="text-gray-700">Message content here.</p>
+        <div>
+         <p class="text-sm font-medium text-gray-700 mb-3">Dispose-t-il de ses papiers (passeport, etc.) ?</p>
+         <div class="flex flex-wrap gap-3"><label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="admin-papiers" value="oui" class="w-4 h-4 text-purple-600"> <span class="text-sm">Oui, tout est à jour</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="admin-papiers" value="cours" class="w-4 h-4 text-purple-600"> <span class="text-sm">En cours</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="admin-papiers" value="non" class="w-4 h-4 text-purple-600"> <span class="text-sm">Non, aucune démarche entamée</span> </label>
+         </div>
         </div>
-    </div>
+        <div>
+         <p class="text-sm font-medium text-gray-700 mb-3">A-t-il déjà l'expérience de démarches longues ?</p>
+         <div class="flex flex-wrap gap-3"><label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="admin-experience" value="oui" class="w-4 h-4 text-purple-600"> <span class="text-sm">Oui, plusieurs fois</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="admin-experience" value="peu" class="w-4 h-4 text-purple-600"> <span class="text-sm">Une ou deux fois</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="admin-experience" value="jamais" class="w-4 h-4 text-purple-600"> <span class="text-sm">Jamais</span> </label>
+         </div>
+        </div>
+        <div class="space-y-3 mt-5">
+         <div><label class="block text-sm font-medium text-gray-700 mb-2">→ Observations :</label> <textarea class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+         </div>
+         <div><label class="block text-sm font-medium text-gray-700 mb-2">→ Freins éventuels :</label> <textarea class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+         </div>
+         <div><label class="block text-sm font-medium text-gray-700 mb-2">→ Besoins identifiés :</label> <textarea class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+         </div>
+        </div>
+       </div>
+      </div><!-- Estime de soi -->
+      <div class="mb-8 p-5 bg-gray-50 rounded-xl">
+       <h3 class="title-font text-2xl text-gray-800 mb-4 flex items-center gap-2"><span>🫶</span> Estime de soi / Bien-être / Confiance</h3>
+       <div class="space-y-5">
+        <div>
+         <p class="text-sm font-medium text-gray-700 mb-3">Le jeune semble-t-il confiant dans sa capacité à partir ?</p>
+         <div class="flex flex-wrap gap-3"><label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="confiance-capacite" value="tres" class="w-4 h-4 text-purple-600"> <span class="text-sm">Oui, très confiant</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="confiance-capacite" value="assez" class="w-4 h-4 text-purple-600"> <span class="text-sm">Assez confiant, avec quelques doutes</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="confiance-capacite" value="peu" class="w-4 h-4 text-purple-600"> <span class="text-sm">Peu confiant, beaucoup d'appréhension</span> </label>
+         </div>
+        </div>
+        <div>
+         <p class="text-sm font-medium text-gray-700 mb-3">A-t-il exprimé des doutes, de l'anxiété, des peurs ?</p>
+         <div class="flex flex-wrap gap-3"><label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="confiance-peurs" value="non" class="w-4 h-4 text-purple-600"> <span class="text-sm">Non, pas de peurs exprimées</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="confiance-peurs" value="quelques" class="w-4 h-4 text-purple-600"> <span class="text-sm">Oui, quelques-unes (solitude, etc.)</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="confiance-peurs" value="importantes" class="w-4 h-4 text-purple-600"> <span class="text-sm">Oui, des peurs importantes</span> </label>
+         </div>
+        </div>
+        <div>
+         <p class="text-sm font-medium text-gray-700 mb-3">Présente-t-il des fragilités particulières ?</p>
+         <div class="flex flex-wrap gap-3"><label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="confiance-fragilites" value="non" class="w-4 h-4 text-purple-600"> <span class="text-sm">Non, pas à ma connaissance</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="confiance-fragilites" value="legeres" class="w-4 h-4 text-purple-600"> <span class="text-sm">Oui, légères (stress)</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="confiance-fragilites" value="importantes" class="w-4 h-4 text-purple-600"> <span class="text-sm">Oui, importantes à prendre en compte</span> </label>
+         </div>
+        </div>
+        <div class="space-y-3 mt-5">
+         <div><label class="block text-sm font-medium text-gray-700 mb-2">→ Observations :</label> <textarea class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+         </div>
+         <div><label class="block text-sm font-medium text-gray-700 mb-2">→ Freins éventuels :</label> <textarea class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+         </div>
+         <div><label class="block text-sm font-medium text-gray-700 mb-2">→ Besoins identifiés :</label> <textarea class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+         </div>
+        </div>
+       </div>
+      </div><!-- Compétences linguistiques -->
+      <div class="mb-8 p-5 bg-gray-50 rounded-xl">
+       <h3 class="title-font text-2xl text-gray-800 mb-4 flex items-center gap-2"><span>🗣️</span> Compétences linguistiques</h3>
+       <div class="overflow-x-auto">
+        <div class="language-grid text-sm mb-3">
+         <div class="font-medium text-gray-700">
+          Niveau
+         </div>
+         <div class="font-medium text-gray-700 text-center">
+          Anglais
+         </div>
+         <div class="font-medium text-gray-700 text-center">
+          Espagnol
+         </div>
+         <div class="font-medium text-gray-700 text-center">
+          Euskara
+         </div>
+         <div class="font-medium text-gray-700 text-center"><input type="text" placeholder="Autre..." class="w-full px-2 py-1 border border-gray-300 rounded text-center text-xs">
+         </div>
+         <div class="font-medium text-gray-700 text-center"><input type="text" placeholder="Autre..." class="w-full px-2 py-1 border border-gray-300 rounded text-center text-xs">
+         </div>
+         <div class="font-medium text-gray-600">
+          A1
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="font-medium text-gray-600">
+          A2
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="font-medium text-gray-600">
+          B1
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="font-medium text-gray-600">
+          B2
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="font-medium text-gray-600">
+          C1
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="font-medium text-gray-600">
+          C2
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+         <div class="text-center">
+          <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+         </div>
+        </div>
+       </div>
+       <div class="space-y-3 mt-5">
+        <div><label class="block text-sm font-medium text-gray-700 mb-2">→ Observations :</label> <textarea class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+        </div>
+        <div><label class="block text-sm font-medium text-gray-700 mb-2">→ Freins éventuels :</label> <textarea class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+        </div>
+        <div><label class="block text-sm font-medium text-gray-700 mb-2">→ Besoins identifiés :</label> <textarea class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+        </div>
+       </div>
+      </div><!-- Appétence interculturelle -->
+      <div class="mb-8 p-5 bg-gray-50 rounded-xl">
+       <h3 class="title-font text-2xl text-gray-800 mb-4 flex items-center gap-2"><span>🌍</span> Appétence interculturelle / Adaptabilité</h3>
+       <div class="space-y-5">
+        <div>
+         <p class="text-sm font-medium text-gray-700 mb-3">A-t-il déjà vécu des expériences hors de son environnement ?</p>
+         <div class="flex flex-wrap gap-3"><label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="interculturel-experience" value="plusieurs" class="w-4 h-4 text-purple-600"> <span class="text-sm">Oui, plusieurs expériences significatives</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="interculturel-experience" value="quelques" class="w-4 h-4 text-purple-600"> <span class="text-sm">Oui, quelques voyages ou rencontres</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="interculturel-experience" value="non" class="w-4 h-4 text-purple-600"> <span class="text-sm">Non, jamais</span> </label>
+         </div>
+        </div>
+        <div>
+         <p class="text-sm font-medium text-gray-700 mb-3">Comment réagit-il à l'idée de vivre dans un environnement différent ?</p>
+         <div class="flex flex-wrap gap-3"><label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="interculturel-reaction" value="enthousiaste" class="w-4 h-4 text-purple-600"> <span class="text-sm">Très enthousiaste et curieux</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="interculturel-reaction" value="mixte" class="w-4 h-4 text-purple-600"> <span class="text-sm">Un mélange de curiosité et d'inquiétude</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="interculturel-reaction" value="inquiet" class="w-4 h-4 text-purple-600"> <span class="text-sm">Plutôt inquiet et réticent</span> </label>
+         </div>
+        </div>
+        <div class="space-y-3 mt-5">
+         <div><label class="block text-sm font-medium text-gray-700 mb-2">→ Observations :</label> <textarea class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+         </div>
+         <div><label class="block text-sm font-medium text-gray-700 mb-2">→ Freins éventuels :</label> <textarea class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+         </div>
+         <div><label class="block text-sm font-medium text-gray-700 mb-2">→ Besoins identifiés :</label> <textarea class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+         </div>
+        </div>
+       </div>
+      </div><!-- Compétences organisationnelles -->
+      <div class="mb-8 p-5 bg-gray-50 rounded-xl">
+       <h3 class="title-font text-2xl text-gray-800 mb-4 flex items-center gap-2"><span>📅</span> Compétences organisationnelles et logistiques</h3>
+       <div class="space-y-5">
+        <div>
+         <p class="text-sm font-medium text-gray-700 mb-3">Le jeune sait-il organiser un projet ?</p>
+         <div class="flex flex-wrap gap-3"><label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="organisation-projet" value="autonome" class="w-4 h-4 text-purple-600"> <span class="text-sm">Oui, de manière autonome</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="organisation-projet" value="partie" class="w-4 h-4 text-purple-600"> <span class="text-sm">En partie, avec un cadre</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="organisation-projet" value="guide" class="w-4 h-4 text-purple-600"> <span class="text-sm">Non, a besoin d'être guidé</span> </label>
+         </div>
+        </div>
+        <div>
+         <p class="text-sm font-medium text-gray-700 mb-3">A-t-il déjà mené des démarches complexes seul ?</p>
+         <div class="flex flex-wrap gap-3"><label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="organisation-demarches" value="oui" class="w-4 h-4 text-purple-600"> <span class="text-sm">Oui</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="organisation-demarches" value="rarement" class="w-4 h-4 text-purple-600"> <span class="text-sm">Rarement</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="organisation-demarches" value="non" class="w-4 h-4 text-purple-600"> <span class="text-sm">Non</span> </label>
+         </div>
+        </div>
+        <div class="space-y-3 mt-5">
+         <div><label class="block text-sm font-medium text-gray-700 mb-2">→ Observations :</label> <textarea class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+         </div>
+         <div><label class="block text-sm font-medium text-gray-700 mb-2">→ Freins éventuels :</label> <textarea class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+         </div>
+         <div><label class="block text-sm font-medium text-gray-700 mb-2">→ Besoins identifiés :</label> <textarea class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+         </div>
+        </div>
+       </div>
+      </div><!-- Ressources financières -->
+      <div class="mb-8 p-5 bg-gray-50 rounded-xl">
+       <h3 class="title-font text-2xl text-gray-800 mb-4 flex items-center gap-2"><span>💰</span> Ressources financières</h3>
+       <div class="space-y-5">
+        <div>
+         <p class="text-sm font-medium text-gray-700 mb-3">Ses ressources sont-elles suffisantes ?</p>
+         <div class="flex flex-wrap gap-3"><label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="financier-ressources" value="oui" class="w-4 h-4 text-purple-600"> <span class="text-sm">Oui, budget sécurisé</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="financier-ressources" value="partiel" class="w-4 h-4 text-purple-600"> <span class="text-sm">Partiellement, des aides sont nécessaires</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="financier-ressources" value="precaire" class="w-4 h-4 text-purple-600"> <span class="text-sm">Non, situation financière très précaire</span> </label>
+         </div>
+        </div>
+        <div>
+         <p class="text-sm font-medium text-gray-700 mb-3">Est-il informé des aides possibles ?</p>
+         <div class="flex flex-wrap gap-3"><label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="financier-aides" value="oui" class="w-4 h-4 text-purple-600"> <span class="text-sm">Oui, bien informé</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="financier-aides" value="partiel" class="w-4 h-4 text-purple-600"> <span class="text-sm">Partiellement</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="financier-aides" value="non" class="w-4 h-4 text-purple-600"> <span class="text-sm">Pas du tout</span> </label>
+         </div>
+        </div>
+        <div class="space-y-3 mt-5">
+         <div><label class="block text-sm font-medium text-gray-700 mb-2">→ Observations :</label> <textarea class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+         </div>
+         <div><label class="block text-sm font-medium text-gray-700 mb-2">→ Freins éventuels :</label> <textarea class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+         </div>
+         <div><label class="block text-sm font-medium text-gray-700 mb-2">→ Besoins identifiés :</label> <textarea class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+         </div>
+        </div>
+       </div>
+      </div><!-- Réseau de soutien -->
+      <div class="p-5 bg-gray-50 rounded-xl">
+       <h3 class="title-font text-2xl text-gray-800 mb-4 flex items-center gap-2"><span>🧑‍🤝‍🧑</span> Réseau de soutien</h3>
+       <div class="space-y-5">
+        <div>
+         <p class="text-sm font-medium text-gray-700 mb-3">Le jeune est-il soutenu par son entourage ?</p>
+         <div class="flex flex-wrap gap-3"><label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="reseau-soutien" value="oui" class="w-4 h-4 text-purple-600"> <span class="text-sm">Oui, totalement</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="reseau-soutien" value="modere" class="w-4 h-4 text-purple-600"> <span class="text-sm">Modérément ou neutre</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="reseau-soutien" value="frein" class="w-4 h-4 text-purple-600"> <span class="text-sm">Non, l'entourage est un frein</span> </label>
+         </div>
+        </div>
+        <div>
+         <p class="text-sm font-medium text-gray-700 mb-3">A-t-il un réseau mobilisable sur place ou à distance ?</p>
+         <div class="flex flex-wrap gap-3"><label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="reseau-mobilisable" value="oui" class="w-4 h-4 text-purple-600"> <span class="text-sm">Oui</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="reseau-mobilisable" value="peu" class="w-4 h-4 text-purple-600"> <span class="text-sm">Un peu</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="radio" name="reseau-mobilisable" value="non" class="w-4 h-4 text-purple-600"> <span class="text-sm">Non</span> </label>
+         </div>
+        </div>
+        <div class="space-y-3 mt-5">
+         <div><label class="block text-sm font-medium text-gray-700 mb-2">→ Observations :</label> <textarea class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+         </div>
+         <div><label class="block text-sm font-medium text-gray-700 mb-2">→ Freins éventuels :</label> <textarea class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+         </div>
+         <div><label class="block text-sm font-medium text-gray-700 mb-2">→ Besoins identifiés :</label> <textarea class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+         </div>
+        </div>
+       </div>
+      </div>
+     </section><!-- Section 5: Diagnostic professionnel -->
+     <section class="section-card p-6 mb-8">
+      <h2 class="title-font text-3xl text-gray-800 mb-6 flex items-center gap-3"><span class="sketch-number bg-amber-100 text-gray-800 w-10 h-10 rounded-full flex items-center justify-center border-2 border-gray-800">5</span> Diagnostic professionnel – Type de parcours</h2>
+      <p class="text-sm font-medium text-gray-700 mb-4">Niveau de sécurisation requis :</p>
+      <div class="space-y-4"><label class="radio-card block cursor-pointer"> <input type="radio" name="parcours" value="autonome" class="sr-only">
+        <div class="p-5 border-2 border-green-200 bg-green-50 rounded-xl flex items-center gap-4"><span class="text-3xl">🟩</span>
+         <div class="font-semibold text-gray-800">
+          Autonome
+         </div>
+        </div></label> <label class="radio-card block cursor-pointer"> <input type="radio" name="parcours" value="progressif" class="sr-only">
+        <div class="p-5 border-2 border-orange-200 bg-orange-50 rounded-xl flex items-center gap-4"><span class="text-3xl">🟧</span>
+         <div class="font-semibold text-gray-800">
+          Progressif
+         </div>
+        </div></label> <label class="radio-card block cursor-pointer"> <input type="radio" name="parcours" value="renforce" class="sr-only">
+        <div class="p-5 border-2 border-red-200 bg-red-50 rounded-xl flex items-center gap-4"><span class="text-3xl">🟥</span>
+         <div class="font-semibold text-gray-800">
+          Renforcé
+         </div>
+        </div></label>
+      </div>
+     </section><!-- Submit Button -->
+     <div class="text-center pb-6"><button type="submit" class="sketch-button bg-amber-200 text-gray-800 px-10 py-4 rounded hover:bg-amber-300 font-bold text-xl title-font"> Enregistrer le diagnostic </button>
+     </div>
+    </form>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      main_title: "Diagnostic Mobilité Internationale",
+      subtitle: "Outil d'analyse et de définition du parcours de préparation au départ"
+    };
 
+    async function onConfigChange(config) {
+      const mainTitle = document.getElementById('main-title');
+      const subtitle = document.getElementById('subtitle');
+      
+      if (mainTitle) {
+        mainTitle.textContent = config.main_title || defaultConfig.main_title;
+      }
+      if (subtitle) {
+        subtitle.textContent = config.subtitle || defaultConfig.subtitle;
+      }
+    }
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-            
-            // --- UI Elements ---
-            const startScreen = document.getElementById('start-screen');
-            const startBtn = document.getElementById('start-diag-btn');
-            const mainContent = document.getElementById('main-content');
-            const form = document.getElementById('analysis-form');
-            const youthIdField = document.getElementById('youth-id');
-            const youthNameField = document.getElementById('youth-name');
-            const youthList = document.getElementById('youth-list');
-            const analysisGridBody = document.getElementById('analysis-grid-body');
-            const messageModal = document.getElementById('message-modal');
-            const messageModalContent = document.getElementById('message-modal-content');
-            const messageModalTitle = document.getElementById('message-modal-title');
-            const messageModalText = document.getElementById('message-modal-text');
-            const closeMessageModalBtn = document.getElementById('close-message-modal-btn');
-            
-            // --- State and DB ---
-            const DB_NAME = 'mobilityDiagnosticsDB_v4';
-            let currentYouthId = null;
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [],
+        borderables: [],
+        fontEditable: undefined,
+        fontSizeable: undefined
+      };
+    }
 
-            // --- Data Structure ---
-            const analysisDomains = [
-                { id: 'admin', emoji: '🗂️', title: 'Autonomie administrative', questions: [ { id: 'q1', text: 'Le jeune sait-il gérer ses démarches administratives seul ?', answers: ['Oui', 'En partie', 'Non, a besoin d\'un soutien constant'] }, { id: 'q2', text: 'Dispose-t-il de ses papiers (passeport, etc.) ?', answers: ['Oui, tout est à jour', 'En cours', 'Non, aucune démarche entamée'] }, { id: 'q3', text: 'A-t-il déjà l’expérience de démarches longues ?', answers: ['Oui, plusieurs fois', 'Une ou deux fois', 'Jamais'] } ]},
-                { id: 'estime', emoji: '🫶', title: 'Estime de soi / Bien-être / Confiance', questions: [ { id: 'q1', text: 'Le jeune semble-t-il confiant dans sa capacité à partir ?', answers: ['Oui, très confiant', 'Assez confiant, avec quelques doutes', 'Peu confiant, beaucoup d\'appréhension'] }, { id: 'q2', text: 'A-t-il exprimé des doutes, de l’anxiété, des peurs ?', answers: ['Non, pas de peurs exprimées', 'Oui, quelques-unes (solitude, etc.)', 'Oui, des peurs importantes'] }, { id: 'q3', text: 'Présente-t-il des fragilités particulières ?', answers: ['Non, pas à ma connaissance', 'Oui, légères (stress)', 'Oui, importantes à prendre en compte'] } ]},
-                { id: 'langues', emoji: '🗣️', title: 'Compétences linguistiques', type: 'language_grid' },
-                { id: 'interculturel', emoji: '🌍', title: 'Appétence interculturelle / Adaptabilité', questions: [ { id: 'q1', text: 'A-t-il déjà vécu des expériences hors de son environnement ?', answers: ['Oui, plusieurs expériences significatives', 'Oui, quelques voyages ou rencontres', 'Non, jamais'] }, { id: 'q2', text: 'Comment réagit-il à l’idée de vivre dans un environnement différent ?', answers: ['Très enthousiaste et curieux', 'Un mélange de curiosité et d\'inquiétude', 'Plutôt inquiet et réticent'] } ]},
-                { id: 'orga', emoji: '📅', title: 'Compétences organisationnelles et logistiques', questions: [ { id: 'q1', text: 'Le jeune sait-il organiser un projet ?', answers: ['Oui, de manière autonome', 'En partie, avec un cadre', 'Non, a besoin d\'être guidé'] }, { id: 'q2', text: 'A-t-il déjà mené des démarches complexes seul ?', answers: ['Oui', 'Rarement', 'Non'] } ]},
-                { id: 'finances', emoji: '💰', title: 'Ressources financières', questions: [ { id: 'q1', text: 'Ses ressources sont-elles suffisantes ?', answers: ['Oui, budget sécurisé', 'Partiellement, des aides sont nécessaires', 'Non, situation financière très précaire'] }, { id: 'q2', text: 'Est-il informé des aides possibles ?', answers: ['Oui, bien informé', 'Partiellement', 'Pas du tout'] } ]},
-                { id: 'soutien', emoji: '🧑‍🤝‍🧑', title: 'Réseau de soutien', questions: [ { id: 'q1', text: 'Le jeune est-il soutenu par son entourage ?', answers: ['Oui, totalement', 'Modérément ou neutre', 'Non, l\'entourage est un frein'] }, { id: 'q2', text: 'A-t-il un réseau mobilisable sur place ou à distance ?', answers: ['Oui', 'Un peu', 'Non'] } ]}
-            ];
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ["main_title", config.main_title || defaultConfig.main_title],
+        ["subtitle", config.subtitle || defaultConfig.subtitle]
+      ]);
+    }
 
-            // --- UI Functions ---
-            const showMessage = (title, text, isError = false) => {
-                messageModalTitle.textContent = title;
-                messageModalText.innerHTML = text;
-                messageModalTitle.className = isError ? 'text-lg font-bold text-red-700' : 'text-lg font-bold text-blue-700';
-                messageModal.classList.remove('hidden');
-                messageModal.classList.add('flex');
-                setTimeout(() => {
-                    messageModalContent.classList.remove('scale-95', 'opacity-0');
-                }, 10);
-            };
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+    }
 
-            const hideMessage = () => {
-                messageModalContent.classList.add('scale-95', 'opacity-0');
-                setTimeout(() => {
-                    messageModal.classList.add('hidden');
-                    messageModal.classList.remove('flex');
-                }, 200);
-            };
+    const form = document.getElementById('diagnostic-form');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const successMessage = document.createElement('div');
+      successMessage.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+      successMessage.textContent = 'Diagnostic enregistré avec succès !';
+      document.body.appendChild(successMessage);
+      
+      setTimeout(() => {
+        successMessage.style.opacity = '0';
+        successMessage.style.transition = 'opacity 0.3s';
+        setTimeout(() => successMessage.remove(), 300);
+      }, 3000);
+    });
 
-            // --- Form and Data Functions ---
-            function generateAnalysisGrid() {
-                analysisGridBody.innerHTML = '';
-                analysisDomains.forEach(domain => {
-                    const domainEl = document.createElement('div');
-                    domainEl.className = 'analysis-domain';
-                    let contentHTML = `<h3>${domain.emoji} ${domain.title}</h3>`;
-
-                    if (domain.type === 'language_grid') {
-                        const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
-                        contentHTML += `
-                        <div class="overflow-x-auto -mx-4">
-                            <table class="w-full text-sm text-left">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="p-2 font-semibold">Niveau</th>
-                                        <th class="p-2 font-semibold text-center">Anglais</th>
-                                        <th class="p-2 font-semibold text-center">Espagnol</th>
-                                        <th class="p-2 font-semibold text-center">Euskara</th>
-                                        <th class="p-2 font-semibold text-center"><input type="text" id="langue-autre-1-name" placeholder="Autre langue..." class="input !p-1 !text-sm text-center"></th>
-                                        <th class="p-2 font-semibold text-center"><input type="text" id="langue-autre-2-name" placeholder="Autre langue..." class="input !p-1 !text-sm text-center"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${levels.map(level => `
-                                    <tr class="border-b">
-                                        <td class="p-2 font-semibold">${level}</td>
-                                        <td class="p-2 text-center"><input type="radio" name="langue-anglais" value="${level}" class="radio"></td>
-                                        <td class="p-2 text-center"><input type="radio" name="langue-espagnol" value="${level}" class="radio"></td>
-                                        <td class="p-2 text-center"><input type="radio" name="langue-euskara" value="${level}" class="radio"></td>
-                                        <td class="p-2 text-center"><input type="radio" name="langue-autre-1" value="${level}" class="radio"></td>
-                                        <td class="p-2 text-center"><input type="radio" name="langue-autre-2" value="${level}" class="radio"></td>
-                                    </tr>`).join('')}
-                                </tbody>
-                            </table>
-                        </div>`;
-                    } else {
-                        contentHTML += domain.questions.map(q => `
-                        <div class="mb-4">
-                            <p class="analysis-question">${q.text}</p>
-                            <div class="analysis-responses">${q.answers.map((ans, aIndex) => `
-                                <div class="radio-group">
-                                    <input type="radio" name="${domain.id}-${q.id}" id="${domain.id}-${q.id}-${aIndex}" value="${aIndex}" class="radio">
-                                    <label for="${domain.id}-${q.id}-${aIndex}" class="font-normal">${ans}</label>
-                                </div>`).join('')}
-                            </div>
-                        </div>`).join('');
-                    }
-                    
-                    contentHTML += `
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                        <div><label for="obs-${domain.id}" class="text-sm">→ Observations :</label><textarea id="obs-${domain.id}" data-field="observations" data-domain="${domain.id}" class="textarea" rows="3"></textarea></div>
-                        <div><label for="freins-${domain.id}" class="text-sm">→ Freins éventuels :</label><textarea id="freins-${domain.id}" data-field="freins" data-domain="${domain.id}" class="textarea" rows="3"></textarea></div>
-                        <div><label for="besoins-${domain.id}" class="text-sm">→ Besoins identifiés :</label><textarea id="besoins-${domain.id}" data-field="besoins" data-domain="${domain.id}" class="textarea" rows="3"></textarea></div>
-                    </div>`;
-
-                    domainEl.innerHTML = contentHTML;
-                    analysisGridBody.appendChild(domainEl);
-                });
+    const radioInputs = document.querySelectorAll('input[type="radio"]');
+    radioInputs.forEach(radio => {
+      radio.addEventListener('change', function() {
+        const container = this.closest('.radio-card');
+        if (container) {
+          const allContainers = document.querySelectorAll(`input[name="${this.name}"]`).forEach(r => {
+            const c = r.closest('.radio-card');
+            if (c) {
+              const div = c.querySelector('div');
+              if (div) div.style.borderWidth = '2px';
             }
-
-            function getFormData() {
-                const analysisGridData = {};
-                analysisDomains.forEach(domain => {
-                    let domainContent;
-                    if (domain.type === 'language_grid') {
-                        domainContent = {
-                            anglais: document.querySelector('input[name="langue-anglais"]:checked')?.value || null,
-                            espagnol: document.querySelector('input[name="langue-espagnol"]:checked')?.value || null,
-                            euskara: document.querySelector('input[name="langue-euskara"]:checked')?.value || null,
-                            autre1: { name: document.getElementById('langue-autre-1-name').value, level: document.querySelector('input[name="langue-autre-1"]:checked')?.value || null },
-                            autre2: { name: document.getElementById('langue-autre-2-name').value, level: document.querySelector('input[name="langue-autre-2"]:checked')?.value || null }
-                        };
-                    } else {
-                        const questionData = {};
-                        domain.questions.forEach(q => {
-                            const checkedRadio = document.querySelector(`input[name="${domain.id}-${q.id}"]:checked`);
-                            questionData[q.id] = checkedRadio ? checkedRadio.value : null;
-                        });
-                        domainContent = { questions: questionData };
-                    }
-                    
-                    analysisGridData[domain.id] = {
-                        ...domainContent,
-                        observations: document.querySelector(`textarea[data-domain='${domain.id}'][data-field='observations']`).value,
-                        freins: document.querySelector(`textarea[data-domain='${domain.id}'][data-field='freins']`).value,
-                        besoins: document.querySelector(`textarea[data-domain='${domain.id}'][data-field='besoins']`).value,
-                    };
-                });
-                return {
-                    id: currentYouthId || crypto.randomUUID(),
-                    name: youthNameField.value,
-                    diagDate: document.getElementById('diag-date').value,
-                    advisorName: document.getElementById('advisor-name').value,
-                    advisorTerritory: document.getElementById('advisor-territory').value,
-                    profil: { autonome: document.getElementById('profil-autonome').checked, motive: document.getElementById('profil-motive').checked, fragile: document.getElementById('profil-fragile').checked },
-                    projection: { type: document.getElementById('mobility-type').value, duration: document.getElementById('mobility-duration').value, destination: document.getElementById('mobility-destination').value },
-                    analysisGrid: analysisGridData,
-                    parcoursType: document.querySelector('input[name="parcours-type"]:checked')?.id || '',
-                    sequences: document.getElementById('sequences').value,
-                    pendant: { referent: document.getElementById('pdt-referent').checked, hebergement: document.getElementById('pdt-hebergement').checked, soutien: document.getElementById('pdt-soutien').checked, suivi: document.getElementById('pdt-suivi').checked, plan: document.getElementById('pdt-plan').checked, objectifs: document.getElementById('pdt-objectifs').checked },
-                    apres: { entretien: document.getElementById('apr-entretien').checked, valorisation: document.getElementById('apr-valorisation').checked, miseajour: document.getElementById('apr-miseajour').checked, integration: document.getElementById('apr-integration').checked, partage: document.getElementById('apr-partage').checked, projection: document.getElementById('apr-projection').checked },
-                    summaryAnalysis: document.getElementById('summary-analysis').value,
-                    summaryPlan: document.getElementById('summary-plan').value,
-                    summaryTimeline: document.getElementById('summary-timeline').value,
-                };
-            }
-
-            function setFormData(data) {
-                clearForm();
-                currentYouthId = data.id;
-                youthIdField.value = data.id;
-                youthNameField.value = data.name || '';
-                document.getElementById('diag-date').value = data.diagDate || '';
-                document.getElementById('advisor-name').value = data.advisorName || '';
-                document.getElementById('advisor-territory').value = data.advisorTerritory || '';
-                if(data.profil){
-                    document.getElementById('profil-autonome').checked = data.profil.autonome || false;
-                    document.getElementById('profil-motive').checked = data.profil.motive || false;
-                    document.getElementById('profil-fragile').checked = data.profil.fragile || false;
-                }
-                if(data.projection){
-                    document.getElementById('mobility-type').value = data.projection.type || '';
-                    document.getElementById('mobility-duration').value = data.projection.duration || '';
-                    document.getElementById('mobility-destination').value = data.projection.destination || '';
-                }
-                if (data.analysisGrid) {
-                    analysisDomains.forEach(domain => {
-                        const domainData = data.analysisGrid[domain.id];
-                        if (domainData) {
-                            if (domain.type === 'language_grid') {
-                                if (domainData.anglais) { const radio = document.querySelector(`input[name="langue-anglais"][value="${domainData.anglais}"]`); if (radio) radio.checked = true; }
-                                if (domainData.espagnol) { const radio = document.querySelector(`input[name="langue-espagnol"][value="${domainData.espagnol}"]`); if (radio) radio.checked = true; }
-                                if (domainData.euskara) { const radio = document.querySelector(`input[name="langue-euskara"][value="${domainData.euskara}"]`); if (radio) radio.checked = true; }
-                                if (domainData.autre1) { document.getElementById('langue-autre-1-name').value = domainData.autre1.name || ''; if (domainData.autre1.level) { const radio = document.querySelector(`input[name="langue-autre-1"][value="${domainData.autre1.level}"]`); if (radio) radio.checked = true; } }
-                                if (domainData.autre2) { document.getElementById('langue-autre-2-name').value = domainData.autre2.name || ''; if (domainData.autre2.level) { const radio = document.querySelector(`input[name="langue-autre-2"][value="${domainData.autre2.level}"]`); if (radio) radio.checked = true; } }
-                            } else if (domainData.questions) {
-                                for (const [qId, qValue] of Object.entries(domainData.questions)) { if (qValue !== null) { const radioToCheck = document.querySelector(`input[name="${domain.id}-${qId}"][value="${qValue}"]`); if (radioToCheck) radioToCheck.checked = true; } }
-                            }
-                            document.querySelector(`textarea[data-domain='${domain.id}'][data-field='observations']`).value = domainData.observations || '';
-                            document.querySelector(`textarea[data-domain='${domain.id}'][data-field='freins']`).value = domainData.freins || '';
-                            document.querySelector(`textarea[data-domain='${domain.id}'][data-field='besoins']`).value = domainData.besoins || '';
-                        }
-                    });
-                }
-                if(data.parcoursType) document.getElementById(data.parcoursType).checked = true;
-                document.getElementById('sequences').value = data.sequences || '';
-                if (data.pendant) { for (const [key, value] of Object.entries(data.pendant)) { const el = document.getElementById(`pdt-${key}`); if (el) el.checked = value; } }
-                if (data.apres) { for (const [key, value] of Object.entries(data.apres)) { const el = document.getElementById(`apr-${key}`); if (el) el.checked = value; } }
-                document.getElementById('summary-analysis').value = data.summaryAnalysis || '';
-                document.getElementById('summary-plan').value = data.summaryPlan || '';
-                document.getElementById('summary-timeline').value = data.summaryTimeline || '';
-            }
-            
-            function clearForm() {
-                form.reset();
-                youthIdField.value = '';
-                currentYouthId = null;
-                document.querySelectorAll('#youth-list li.active').forEach(el => el.classList.remove('active'));
-                youthNameField.focus();
-            }
-
-            // --- Local Storage Functions ---
-            function saveYouthData() {
-                if (!youthNameField.value.trim()) {
-                    showMessage("Erreur", "Le nom du jeune est obligatoire.", true);
-                    youthNameField.focus();
-                    return;
-                }
-                const data = getFormData();
-                const db = JSON.parse(localStorage.getItem(DB_NAME)) || {};
-                db[data.id] = data;
-                localStorage.setItem(DB_NAME, JSON.stringify(db));
-                currentYouthId = data.id;
-                renderYouthList();
-                showMessage("Sauvegarde", "Le diagnostic a été sauvegardé avec succès.");
-            }
-
-            function loadYouthData(id) {
-                const db = JSON.parse(localStorage.getItem(DB_NAME)) || {};
-                if (db[id]) {
-                    setFormData(db[id]);
-                    currentYouthId = id;
-                    document.querySelectorAll('#youth-list li').forEach(li => li.classList.toggle('active', li.dataset.id === id));
-                }
-            }
-
-            function deleteYouthData(id) {
-                const db = JSON.parse(localStorage.getItem(DB_NAME)) || {};
-                delete db[id];
-                localStorage.setItem(DB_NAME, JSON.stringify(db));
-                if (currentYouthId === id) {
-                    clearForm();
-                }
-                renderYouthList();
-            }
-
-            function renderYouthList() {
-                const db = JSON.parse(localStorage.getItem(DB_NAME)) || {};
-                const youths = Object.values(db).sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-                youthList.innerHTML = '';
-                if (youths.length === 0) {
-                    youthList.innerHTML = `<li class="text-center text-gray-500 p-4">Aucun suivi.</li>`;
-                    return;
-                }
-                youths.forEach(youth => {
-                    const li = document.createElement('li');
-                    li.dataset.id = youth.id;
-                    li.className = `transition-all ${currentYouthId === youth.id ? 'active' : ''}`;
-                    li.innerHTML = `
-                        <span class="flex-1 font-medium py-1">${youth.name || 'Sans nom'}</span>
-                        <button data-delete-id="${youth.id}" data-delete-name="${youth.name}" class="delete-btn btn-danger p-1 rounded-full w-6 h-6 flex items-center justify-center opacity-25 hover:opacity-100 transition-opacity">
-                            <i data-lucide="x" class="w-4 h-4"></i>
-                        </button>`;
-                    li.querySelector('span').addEventListener('click', () => loadYouthData(youth.id));
-                    youthList.appendChild(li);
-                });
-                lucide.createIcons();
-            }
-
-            // --- Event Listeners ---
-            startBtn.addEventListener('click', () => {
-                startScreen.classList.add('hidden');
-                mainContent.classList.remove('hidden');
-            });
-            document.getElementById('save-btn').addEventListener('click', saveYouthData);
-            document.getElementById('new-youth-btn').addEventListener('click', clearForm);
-            document.getElementById('print-btn').addEventListener('click', () => window.print());
-            closeMessageModalBtn.addEventListener('click', hideMessage);
-            youthList.addEventListener('click', (e) => {
-                const deleteBtn = e.target.closest('.delete-btn');
-                if (deleteBtn) {
-                    e.stopPropagation();
-                    showMessage("Confirmation", `Supprimer le diagnostic de "${deleteBtn.dataset.deleteName}" ?<br><br><button id="confirm-delete" class="btn btn-danger">Confirmer</button>`, false);
-                    document.getElementById('confirm-delete').onclick = () => {
-                        deleteYouthData(deleteBtn.dataset.deleteId);
-                        hideMessage();
-                    };
-                }
-            });
-
-            // --- Initial Load ---
-            generateAnalysisGrid();
-            renderYouthList();
-            document.getElementById('diag-date').valueAsDate = new Date();
-        });
-    </script>
-</body>
+          });
+        }
+      });
+    });
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9aa1f67c130113f4',t:'MTc2NTA4ODkwNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
-
