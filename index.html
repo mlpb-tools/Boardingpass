@@ -14,22 +14,24 @@
         }
 
         :root {
-            --color-red: #E62828;
-            --color-blue: #0050FF;
-            --color-yellow: #FFD500;
-            --color-green: #00A86B;
-            --color-orange: #FF6B00;
-            --color-black: #000000;
-            --color-white: #FFFFFF;
-            --color-grey-light: #F5F5F5;
-            --color-grey-medium: #CCCCCC;
+            --color-orange: #f39200;
+            --color-vert: #95c11f;
+            --color-bleu: #2897d5;
+            --color-rose: #d60b52;
+            --color-violet: #a3195b;
+            --color-rouge: #9f3d3f;
+            --color-noir: #171718;
+            --color-blanc: #FFFFFF;
+            --color-jaune: #FFD500;
+            --color-gris-clair: #F5F5F5;
+            --color-gris-moyen: #CCCCCC;
         }
 
         body {
             font-family: 'Montserrat', sans-serif;
-            background: var(--color-white);
+            background: var(--color-blanc);
             min-height: 100vh;
-            color: var(--color-black);
+            color: var(--color-noir);
             position: relative;
         }
 
@@ -40,7 +42,7 @@
             right: -100px;
             width: 300px;
             height: 300px;
-            background: var(--color-yellow);
+            background: var(--color-orange);
             border-radius: 50%;
             z-index: 0;
             opacity: 0.15;
@@ -53,7 +55,7 @@
             left: -150px;
             width: 400px;
             height: 400px;
-            background: var(--color-blue);
+            background: var(--color-vert);
             clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
             z-index: 0;
             opacity: 0.1;
@@ -62,7 +64,7 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: var(--color-white);
+            background: var(--color-blanc);
             box-shadow: 0 0 40px rgba(0,0,0,0.1);
             position: relative;
             z-index: 1;
@@ -70,8 +72,8 @@
 
         /* HEADER */
         .header {
-            background: var(--color-black);
-            color: var(--color-white);
+            background: var(--color-rouge);
+            color: var(--color-blanc);
             padding: 50px 40px;
             position: relative;
             overflow: hidden;
@@ -84,7 +86,7 @@
             right: 80px;
             width: 120px;
             height: 120px;
-            background: var(--color-red);
+            background: var(--color-orange);
             border-radius: 50%;
         }
 
@@ -97,7 +99,7 @@
             height: 0;
             border-left: 80px solid transparent;
             border-right: 80px solid transparent;
-            border-bottom: 140px solid var(--color-yellow);
+            border-bottom: 140px solid var(--color-bleu);
         }
 
         .logo {
@@ -127,19 +129,19 @@
 
         /* ACTIONS BAR */
         .actions-bar {
-            background: var(--color-yellow);
+            background: var(--color-orange);
             padding: 20px 40px;
             display: flex;
             gap: 15px;
             flex-wrap: wrap;
-            border-bottom: 3px solid var(--color-black);
+            border-bottom: 3px solid var(--color-noir);
         }
 
         .btn {
             padding: 12px 24px;
-            background: var(--color-white);
-            color: var(--color-black);
-            border: 3px solid var(--color-black);
+            background: var(--color-blanc);
+            color: var(--color-noir);
+            border: 3px solid var(--color-noir);
             font-family: 'Montserrat', sans-serif;
             font-size: 14px;
             font-weight: 700;
@@ -150,26 +152,26 @@
         }
 
         .btn:hover {
-            background: var(--color-black);
-            color: var(--color-white);
+            background: var(--color-noir);
+            color: var(--color-blanc);
             transform: translate(2px, -2px);
-            box-shadow: -3px 3px 0 var(--color-red);
+            box-shadow: -3px 3px 0 var(--color-violet);
         }
 
         .btn-primary {
-            background: var(--color-red);
-            color: var(--color-white);
+            background: var(--color-rose);
+            color: var(--color-blanc);
         }
 
         .btn-primary:hover {
-            background: var(--color-black);
-            box-shadow: -3px 3px 0 var(--color-yellow);
+            background: var(--color-noir);
+            box-shadow: -3px 3px 0 var(--color-jaune);
         }
 
         /* SECTIONS */
         .section {
             padding: 40px;
-            border-bottom: 3px solid var(--color-black);
+            border-bottom: 3px solid var(--color-noir);
         }
 
         .section-header {
@@ -177,8 +179,8 @@
             margin-bottom: 30px;
             position: relative;
             overflow: hidden;
-            color: var(--color-white);
-            border: 3px solid var(--color-black);
+            color: var(--color-blanc);
+            border: 3px solid var(--color-noir);
         }
 
         .section-header h2 {
@@ -200,7 +202,7 @@
 
         /* Section 1 - Bleu */
         .section:nth-of-type(1) .section-header {
-            background: var(--color-blue);
+            background: var(--color-bleu);
         }
 
         .section:nth-of-type(1) .section-header::before {
@@ -212,14 +214,14 @@
             height: 0;
             border-left: 45px solid transparent;
             border-right: 45px solid transparent;
-            border-bottom: 75px solid var(--color-yellow);
+            border-bottom: 75px solid var(--color-jaune);
             opacity: 0.3;
         }
 
-        /* Section 2 - Jaune */
+        /* Section 2 - Orange */
         .section:nth-of-type(2) .section-header {
-            background: var(--color-yellow);
-            color: var(--color-black);
+            background: var(--color-orange);
+            color: var(--color-noir);
         }
 
         .section:nth-of-type(2) .section-header::before {
@@ -229,14 +231,14 @@
             right: 35px;
             width: 70px;
             height: 70px;
-            background: var(--color-red);
+            background: var(--color-rose);
             border-radius: 50%;
             opacity: 0.25;
         }
 
-        /* Section 3 - Rouge */
+        /* Section 3 - Violet */
         .section:nth-of-type(3) .section-header {
-            background: var(--color-red);
+            background: var(--color-violet);
         }
 
         .section:nth-of-type(3) .section-header::before {
@@ -246,13 +248,14 @@
             right: 40px;
             width: 60px;
             height: 60px;
-            background: var(--color-blue);
+            background: var(--color-vert);
             opacity: 0.3;
         }
 
-        /* Section 4 - Bleu */
+        /* Section 4 - Vert */
         .section:nth-of-type(4) .section-header {
-            background: var(--color-blue);
+            background: var(--color-vert);
+            color: var(--color-noir);
         }
 
         .section:nth-of-type(4) .section-header::after {
@@ -264,13 +267,13 @@
             height: 0;
             border-left: 40px solid transparent;
             border-right: 40px solid transparent;
-            border-top: 70px solid var(--color-yellow);
+            border-top: 70px solid var(--color-bleu);
             opacity: 0.28;
         }
 
         /* Section 5 - Noir */
         .section:nth-of-type(5) .section-header {
-            background: var(--color-black);
+            background: var(--color-noir);
         }
 
         .section:nth-of-type(5) .section-header::before {
@@ -280,7 +283,7 @@
             right: 36px;
             width: 70px;
             height: 70px;
-            background: var(--color-red);
+            background: var(--color-rose);
             opacity: 0.3;
         }
 
@@ -291,7 +294,7 @@
             right: 70px;
             width: 50px;
             height: 50px;
-            background: var(--color-yellow);
+            background: var(--color-orange);
             opacity: 0.25;
         }
 
@@ -317,8 +320,8 @@
         .form-field textarea {
             width: 100%;
             padding: 12px;
-            border: 3px solid var(--color-black);
-            background: var(--color-white);
+            border: 3px solid var(--color-noir);
+            background: var(--color-blanc);
             font-family: 'Montserrat', sans-serif;
             font-size: 14px;
             transition: all 0.2s;
@@ -328,7 +331,7 @@
         .form-field select:focus,
         .form-field textarea:focus {
             outline: none;
-            border-color: var(--color-red);
+            border-color: var(--color-rose);
             transform: translateY(-2px);
         }
 
@@ -346,9 +349,9 @@
         }
 
         .profile-card {
-            border: 3px solid var(--color-black);
+            border: 3px solid var(--color-noir);
             padding: 20px;
-            background: var(--color-white);
+            background: var(--color-blanc);
             cursor: pointer;
             transition: all 0.2s;
             position: relative;
@@ -359,11 +362,11 @@
         }
 
         .profile-card.green {
-            border-left: 10px solid var(--color-green);
+            border-left: 10px solid var(--color-vert);
         }
 
         .profile-card.green:hover {
-            box-shadow: -4px 4px 0 var(--color-green);
+            box-shadow: -4px 4px 0 var(--color-vert);
         }
 
         .profile-card.orange {
@@ -375,11 +378,11 @@
         }
 
         .profile-card.red {
-            border-left: 10px solid var(--color-red);
+            border-left: 10px solid var(--color-rose);
         }
 
         .profile-card.red:hover {
-            box-shadow: -4px 4px 0 var(--color-red);
+            box-shadow: -4px 4px 0 var(--color-rose);
         }
 
         .profile-card input[type="radio"] {
@@ -388,7 +391,7 @@
         }
 
         .profile-card input[type="radio"]:checked + .card-content {
-            background: var(--color-yellow);
+            background: var(--color-orange);
         }
 
         .card-icon {
@@ -412,14 +415,14 @@
         /* DIMENSION CARD */
         .dimension-card {
             margin-bottom: 30px;
-            border: 3px solid var(--color-black);
-            background: var(--color-white);
+            border: 3px solid var(--color-noir);
+            background: var(--color-blanc);
         }
 
         .dimension-header {
             padding: 18px 20px;
-            background: var(--color-grey-light);
-            border-bottom: 3px solid var(--color-black);
+            background: var(--color-gris-clair);
+            border-bottom: 3px solid var(--color-noir);
             font-size: 18px;
             font-weight: 700;
             display: flex;
@@ -455,8 +458,8 @@
 
         .radio-option {
             padding: 10px 18px;
-            border: 3px solid var(--color-black);
-            background: var(--color-white);
+            border: 3px solid var(--color-noir);
+            background: var(--color-blanc);
             cursor: pointer;
             font-weight: 600;
             font-size: 13px;
@@ -469,7 +472,7 @@
         }
 
         .radio-option:hover {
-            background: var(--color-yellow);
+            background: var(--color-orange);
             transform: translateY(-2px);
         }
 
@@ -479,10 +482,10 @@
         }
 
         .radio-option:has(input:checked) {
-            background: var(--color-red);
-            color: var(--color-white);
+            background: var(--color-rose);
+            color: var(--color-blanc);
             transform: translateY(-3px);
-            box-shadow: 4px 4px 0 var(--color-black);
+            box-shadow: 4px 4px 0 var(--color-noir);
         }
 
         .textarea-field {
@@ -499,8 +502,8 @@
         .textarea-field textarea {
             width: 100%;
             padding: 12px;
-            border: 3px solid var(--color-black);
-            background: var(--color-white);
+            border: 3px solid var(--color-noir);
+            background: var(--color-blanc);
             font-family: 'Montserrat', sans-serif;
             font-size: 14px;
             min-height: 80px;
@@ -509,7 +512,7 @@
 
         .textarea-field textarea:focus {
             outline: none;
-            border-color: var(--color-red);
+            border-color: var(--color-rose);
         }
 
         /* LANGUAGE TABLE */
@@ -523,21 +526,21 @@
         .language-table th,
         .language-table td {
             padding: 12px;
-            border: 2px solid var(--color-black);
+            border: 2px solid var(--color-noir);
             text-align: center;
             font-weight: 600;
         }
 
         .language-table th {
-            background: var(--color-black);
-            color: var(--color-white);
+            background: var(--color-noir);
+            color: var(--color-blanc);
             text-transform: uppercase;
             font-size: 13px;
             letter-spacing: 0.5px;
         }
 
         .language-table td {
-            background: var(--color-white);
+            background: var(--color-blanc);
         }
 
         .language-table input[type="radio"] {
@@ -549,8 +552,8 @@
         /* SAVE SECTION */
         .save-section {
             padding: 40px;
-            background: var(--color-red);
-            color: var(--color-white);
+            background: var(--color-violet);
+            color: var(--color-blanc);
             position: relative;
             overflow: hidden;
             text-align: center;
@@ -563,7 +566,7 @@
             left: 60px;
             width: 150px;
             height: 150px;
-            background: var(--color-yellow);
+            background: var(--color-orange);
             border-radius: 50%;
             opacity: 0.3;
         }
@@ -577,7 +580,7 @@
             height: 0;
             border-left: 60px solid transparent;
             border-right: 60px solid transparent;
-            border-top: 100px solid var(--color-blue);
+            border-top: 100px solid var(--color-bleu);
             opacity: 0.25;
         }
 
@@ -593,9 +596,9 @@
 
         .btn-save {
             padding: 18px 40px;
-            background: var(--color-white);
-            color: var(--color-black);
-            border: 3px solid var(--color-black);
+            background: var(--color-blanc);
+            color: var(--color-noir);
+            border: 3px solid var(--color-noir);
             font-family: 'Montserrat', sans-serif;
             font-size: 16px;
             font-weight: 700;
@@ -608,10 +611,10 @@
         }
 
         .btn-save:hover {
-            background: var(--color-black);
-            color: var(--color-white);
+            background: var(--color-noir);
+            color: var(--color-blanc);
             transform: translate(3px, -3px);
-            box-shadow: -4px 4px 0 var(--color-yellow);
+            box-shadow: -4px 4px 0 var(--color-jaune);
         }
 
         /* RESPONSIVE */
